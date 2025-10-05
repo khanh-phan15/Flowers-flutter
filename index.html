@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Flowers and Flutters</title>
   <style>
+    
     @font-face {
       font-family: 'MyFont';
       src: url('fonts/AyerPoster-Regular-Trial.woff2') format('woff2'),
@@ -137,7 +138,7 @@
       justify-content:center;
       align-items:center;
       overflow:hidden;
-      background:#000;
+        background: transparent;
       transition: all .6s ease-in-out;
     }
 
@@ -220,29 +221,76 @@
     const pauseButton = document.querySelector('.pause-button');
     const circle = document.querySelector('.circle-image');
     const expandButton = document.querySelector('.center-button');
-
+  
     const imageSrc = 'images/home-background.jpg';
     const videoSrc = 'images/home-video.mp4';
-
+  
+    // videoEl = video inside the circle (when not expanded)
+    // expandedVideo = video inside the overlay (when expanded)
     let videoEl = null;
+    let expandedVideo = null;
     let overlayStartRect = null;
-
-    // --- PLAY / PAUSE (unchanged behaviour) ---
+    let preExpandWasVideo = false; // remembers if circle had video before expand
+  
+    // --- PLAY ---
     playButton.addEventListener('click', () => {
+      const overlay = document.querySelector('.fullscreen-overlay');
+  
+      if (overlay) {
+        // If overlay exists, operate on the expanded area
+        const ovVideo = overlay.querySelector('video');
+        if (ovVideo) {
+          // If a video already exists in overlay, just play it
+          ovVideo.play();
+          expandedVideo = ovVideo;
+        } else {
+          // Otherwise replace overlay content with a video
+          const v = document.createElement('video');
+          v.src = videoSrc;
+          v.autoplay = true;
+          v.loop = true;
+          v.muted = true;
+          v.style.width = '100%';
+          v.style.height = '100%';
+          v.style.objectFit = 'cover';
+          v.style.borderRadius = '0';
+          overlay.innerHTML = ''; // remove existing image/video node
+          overlay.appendChild(v);
+          expandedVideo = v;
+        }
+        return; // done — do not touch circle
+      }
+  
+      // No overlay: previous behavior (create video inside circle)
       circle.innerHTML = '';
-      videoEl = document.createElement('video');
-      videoEl.src = videoSrc;
-      videoEl.autoplay = true;
-      videoEl.loop = true;
-      videoEl.muted = true;
-      videoEl.style.width = '100%';
-      videoEl.style.height = '100%';
-      videoEl.style.objectFit = 'cover';
-      videoEl.style.borderRadius = '50%';
-      circle.appendChild(videoEl);
+      const vid = document.createElement('video');
+      vid.src = videoSrc;
+      vid.autoplay = true;
+      vid.loop = true;
+      vid.muted = true;
+      vid.style.width = '100%';
+      vid.style.height = '100%';
+      vid.style.objectFit = 'cover';
+      vid.style.borderRadius = '50%';
+      circle.appendChild(vid);
+      videoEl = vid;
     });
-
+  
+    // --- PAUSE ---
     pauseButton.addEventListener('click', () => {
+      const overlay = document.querySelector('.fullscreen-overlay');
+  
+      if (overlay) {
+        // If overlay exists, pause its video (if present) but DO NOT recreate circle content
+        const ovVideo = overlay.querySelector('video');
+        if (ovVideo) {
+          ovVideo.pause();
+          expandedVideo = ovVideo;
+        }
+        return; // do not alter circle
+      }
+  
+      // No overlay: previous behavior (pause & remove circle video, restore image)
       if (videoEl) {
         videoEl.pause();
         videoEl.remove();
@@ -256,22 +304,24 @@
       img.style.objectFit = 'cover';
       circle.appendChild(img);
     });
-
+  
     // --- EXPAND (morph) logic ---
     expandButton.addEventListener('click', () => {
       const existingOverlay = document.querySelector('.fullscreen-overlay');
-
+  
       // if overlay exists, trigger shrink (same logic as clicking the overlay)
       if (existingOverlay) {
-        // shrink back
         shrinkOverlay(existingOverlay);
         return;
       }
-
+  
       // capture circle rect to start animation from exact place
       const rect = circle.getBoundingClientRect();
       overlayStartRect = rect; // save for shrink
-
+  
+      // remember if circle had a video before expanding
+      preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
+  
       // create overlay and place it behind everything (insert as first child)
       const overlay = document.createElement('div');
       overlay.className = 'fullscreen-overlay';
@@ -282,23 +332,55 @@
       overlay.style.height = `${rect.height}px`;
       overlay.style.borderRadius = '50%';
       overlay.style.transform = 'translate(-50%,-50%)';
-
-      // clone current inside of circle (image or video)
-      const child = circle.firstElementChild
-        ? circle.firstElementChild.cloneNode(true)
-        : (() => {
-            const i = document.createElement('img');
-            i.src = imageSrc;
-            return i;
-          })();
-      child.style.borderRadius = '0';
-      child.style.width = '100%';
-      child.style.height = '100%';
-      overlay.appendChild(child);
-
+      overlay.style.position = 'fixed';
+      overlay.style.zIndex = '0';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.overflow = 'hidden';
+      overlay.style.background = 'transparent';
+      overlay.style.transition = 'all .6s ease-in-out';
+  
+      // If the circle currently had a video, create a new video inside overlay (don't clone DOM node)
+      const circleVideo = circle.querySelector('video');
+      if (circleVideo || videoEl) {
+        const v = document.createElement('video');
+        v.src = videoSrc;
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = true;
+        v.style.position = 'absolute';
+        v.style.top = '0';
+        v.style.left = '0';
+        v.style.width = '100%';
+        v.style.height = '100%';
+        v.style.objectFit = 'cover';
+        v.style.borderRadius = '0';
+        overlay.appendChild(v);
+        expandedVideo = v;
+      } else {
+        // otherwise, create an image inside overlay
+        const i = document.createElement('img');
+        i.src = imageSrc;
+        i.style.position = 'absolute';
+        i.style.top = '0';
+        i.style.left = '0';
+        i.style.width = '100%';
+        i.style.height = '100%';
+        i.style.objectFit = 'cover';
+        i.style.borderRadius = '0';
+        overlay.appendChild(i);
+        expandedVideo = null;
+      }
+  
       // insert behind all content
       document.body.insertBefore(overlay, document.body.firstChild);
-
+  
+      // remove the circle content and hide background to avoid gray flash
+      const originalBg = circle.style.background;
+      circle.style.background = 'transparent';
+      circle.innerHTML = '';
+  
       // start expand on next frame
       requestAnimationFrame(() => {
         overlay.classList.add('expanded');
@@ -307,34 +389,29 @@
         overlay.style.width = '100vw';
         overlay.style.height = '100vh';
         overlay.style.borderRadius = '0';
-
-        // remove original circle content so circle disappears while overlay grows
-        circle.innerHTML = '';
       });
-
+  
       // after the overlay finishes expanding, toggle UI to white
       const onExpandEnd = (ev) => {
-        // wait for a width/height transition end — do it once
         if (ev.propertyName === 'width' || ev.propertyName === 'height') {
-          document.body.classList.add('white-ui'); // all UI turns white via CSS
+          document.body.classList.add('white-ui');
           overlay.removeEventListener('transitionend', onExpandEnd);
         }
       };
       overlay.addEventListener('transitionend', onExpandEnd);
-
+  
       // clicking overlay will shrink it back
-      overlay.addEventListener('click', () => shrinkOverlay(overlay));
+      overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
     });
-
+  
     // shrink helper: animate overlay back and remove; restore UI colors after animation
-    function shrinkOverlay(overlay) {
+    function shrinkOverlay(overlay, originalBg = '#ddd') {
       if (!overlay || !overlayStartRect) {
         overlay && overlay.remove();
         document.body.classList.remove('white-ui');
         return;
       }
-
-      // remove white UI immediately or after the shrink animation? we'll remove after shrink finishes
+  
       // animate back to start rect
       overlay.classList.remove('expanded');
       overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
@@ -342,19 +419,20 @@
       overlay.style.width = `${overlayStartRect.width}px`;
       overlay.style.height = `${overlayStartRect.height}px`;
       overlay.style.borderRadius = '50%';
-
-      // when shrink completes, remove overlay and restore UI colors
+  
+      // when shrink completes, remove overlay and restore UI colors & circle content
       const onShrinkEnd = (ev) => {
         if (ev.propertyName === 'width' || ev.propertyName === 'height') {
           overlay.removeEventListener('transitionend', onShrinkEnd);
           overlay.remove();
-          // restore UI to original colors
           document.body.classList.remove('white-ui');
-
-          // restore the circle's original content (image or video) depending on `videoEl` presence:
-          // If videoEl was playing before expansion, re-create it; otherwise restore image.
-          if (videoEl) {
-            // If the video element object still exists, append a fresh video element to circle
+  
+          // restore the circle background
+          circle.style.background = originalBg || '#ddd';
+  
+          // If the expanded overlay had a video (expandedVideo exists) OR the circle had a video before expand,
+          // create a circle video; otherwise restore the image.
+          if (expandedVideo || preExpandWasVideo) {
             const v = document.createElement('video');
             v.src = videoSrc;
             v.autoplay = true;
@@ -365,7 +443,7 @@
             v.style.objectFit = 'cover';
             v.style.borderRadius = '50%';
             circle.appendChild(v);
-            videoEl = v; // keep reference
+            videoEl = v;
           } else {
             const img = document.createElement('img');
             img.src = imageSrc;
@@ -375,10 +453,15 @@
             img.style.objectFit = 'cover';
             circle.appendChild(img);
           }
+  
+          // reset expandedVideo + preExpandWasVideo state
+          expandedVideo = null;
+          preExpandWasVideo = false;
         }
       };
       overlay.addEventListener('transitionend', onShrinkEnd);
     }
   </script>
+  
 </body>
 </html>
