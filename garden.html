@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Flowers and Flutters</title>
+  <style>
+    @font-face {
+      font-family: 'MyFont';
+      src: url('fonts/AyerPoster-Regular-Trial.woff2') format('woff2'),
+           url('fonts/AyerPoster-Regular-Trial.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'TitleFont';
+      src: url('fonts/AyerPosterCursive-RegularItalic-Trial.woff2') format('woff2'),
+           url('fonts/AyerPosterCursive-RegularItalic-Trial.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'BodyFont';
+      src: url('fonts/Akkurat.woff2') format('woff2'),
+           url('fonts/Akkurat.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'MyFont', serif;
+      background: #fff;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 2vw;
+      position: relative;
+    }
+
+    /* Left & right columns */
+    .side-group { display: flex; flex-direction: column; justify-content: flex-start; }
+    .left-group { align-items: flex-start; }
+    .right-group { align-items: flex-end; }
+
+    .home-button, .menu-button {
+      font-family:'BodyFont', sans-serif;
+      font-size:13pt;
+      margin-top:2rem;
+      cursor:pointer;
+      transition: color .36s ease;
+      text-decoration: none;
+      color:#333;
+    }
+
+    .flowers, .flutter {
+      font-size: 19vw;
+      font-weight: normal;
+      color: #333;
+      writing-mode: vertical-rl;
+      line-height: 1;
+      text-align: center;
+      margin-top: 1rem;
+      transition: color .36s ease;
+    }
+    .flowers { transform: rotate(180deg); }
+
+    /* Middle block centered absolutely */
+    .middle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -53%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .intro {
+      font-family:'BodyFont', sans-serif;
+      font-size:13pt;
+      max-width:100%;
+      text-align:center;
+      margin-bottom:4rem;
+      transition: color .36s ease;
+    }
+
+    .title {
+      font-family:'TitleFont', sans-serif;
+      font-size:30pt;
+      max-width:50%;
+      text-align:center;
+      transition: opacity 0.8s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      pointer-events: none;
+    }
+
+    .circle-image {
+      width: 60vmin;
+      height: 60vmin;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: #ddd;
+    }
+    .circle-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .media-layer {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      z-index: 0;
+    }
+
+    .media-layer img, .media-layer video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Title fade control */
+    .circle-image.show-title .title { opacity: 1 !important; }
+    .circle-image .title { opacity: 1; }
+
+    .control-bar {
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:1.5rem;
+      gap:2rem;
+    }
+
+    .pause-button {
+      font-size:24pt;
+      cursor:pointer;
+      user-select:none;
+      color:#314C1C;
+      transition: color .36s ease;
+    }
+
+    /* Play triangle */
+    .play-button {
+      width:0;
+      height:0;
+      border-left:25px solid #314C1C;
+      border-top:15px solid transparent;
+      border-bottom:15px solid transparent;
+      cursor:pointer;
+      transition: border-left-color .36s ease;
+    }
+
+    .center-button { width:50px; height:50px; cursor:pointer; }
+    .center-button img { width:100%; height:100%; object-fit:cover; display:block; transition: filter .36s ease; }
+
+    /* Fullscreen overlay */
+    .fullscreen-overlay {
+      position: fixed;
+      z-index: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: transparent;
+      transition: all .6s ease-in-out;
+    }
+    .fullscreen-overlay video, .fullscreen-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .fullscreen-overlay.expanded {
+      top: 50% !important;
+      left: 50% !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    /* WHITE UI state */
+    .white-ui .home-button,
+    .white-ui .menu-button,
+    .white-ui .pause-button,
+    .white-ui .intro,
+    .white-ui .flowers,
+    .white-ui .flutter { color: #fff !important; }
+
+    .white-ui .play-button { border-left-color: #fff !important; }
+    .white-ui .center-button img { filter: brightness(0) invert(1) !important; }
+
+
+    .left-arrow, .right-arrow {
+  position: absolute;
+  top: 50%; /* vertical center */
+  transform: translateY(-50%);
+  font-size: 36pt;
+  color: #314C1C;
+  cursor: pointer;
+  user-select: none;
+  z-index: 3;
+}
+
+.left-arrow { left: -460px; }   /* adjust distance from circle */
+.right-arrow { right: -460px; } /* adjust distance from circle */
+
+    .fullscreen-poem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'BodyFont', sans-serif;
+  font-size: 1.2rem;
+  text-align: left;
+  white-space: pre-line; /* keep line breaks */
+  max-width: 80%;
+  z-index: 5;
+  pointer-events: none;
+}
+.slide-out-left {
+  transform: translateX(-100%);
+}
+/* Slide-in menu panel */
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -400px; /* hidden by default */
+  width: 300px;
+  height: 100vh;
+  background: #f5ffd4;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 1000; /* above everything */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'BodyFont', sans-serif;
+}
+.side-menu a {
+  text-decoration: none;
+  color: #333; /* or any color you want for menu text */
+  transition: color 0.3s ease;
+  font-size: 13pt;
+}
+
+/* Optional: hover effect */
+.side-menu a:hover {
+  color: #314C1C; /* highlight color on hover */
+}
+.side-menu.open {
+  right: 0; /* slide in */
+}
+
+/* optional: overlay behind menu when open */
+.menu-overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background: rgba(0,0,0,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  z-index: 900;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.side-menu .menu-item > a {
+  cursor: pointer;
+  display: block;
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
+
+.side-menu .submenu {
+  max-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: max-height 0.3s ease;
+  padding-left: 1rem;
+}
+
+.side-menu .submenu.open {
+  max-height: 500px; /* large enough to show all sections */
+}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Left -->
+  <div class="side-group left-group">
+      <a href="index.html" class="home-button">HOME</a>
+  </div>
+  <div class="menu-overlay"></div>
+
+  <!-- Slide-in menu content -->
+  <div class="side-menu">
+    <div class="menu-item">
+      <a href="#">CHAPTER 1</a>
+      <div class="submenu">
+        <a href="rhodora.html">To Daffodils</a>
+        <a href="fadingpetals.html">Fading Petals</a>
+      </div>
+    </div>
+    <div class="menu-item">
+      <a href="#">CHAPTER 2</a>
+      <div class="submenu">
+        <a href="todaffodils.html">To Daffodils</a>
+  
+      </div>
+    </div>
+    <div class="menu-item">
+      <a href="#">CHAPTER 3</a>
+      <div class="submenu">
+        <a href="garden.html">The Garden of Love</a>
+        <a href="woman.html">Every Woman Lives Like a Flower</a>
+      </div>
+    </div>
+  </div>
+  <!-- Right -->
+  <div class="side-group right-group">
+    <div class="menu-button">MENU</div>
+  </div>
+
+  <!-- Middle: intro, circle, controls -->
+  <div class="middle">
+    <div class="intro">CHAPTER 3: THE HUMAN HANDS ON BEAUTY</div>
+    <div class="circle-image show-title">
+      <div class="media-layer">
+        <img src="images/garden.jpg" alt="Circular Image">
+      </div>
+      <div class="title">The Garden of Love</div>
+
+    </div>
+    <div class="left-arrow"><</div>
+    <div class="right-arrow" data-target="fadingpetals.html">></div>
+
+    <div class="control-bar">
+      <div class="pause-button">⏸</div>
+      <div class="center-button">
+        <img src="images/expand-button.png" alt="Expand">
+      </div>
+      <div class="play-button"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const rightArrow = document.querySelector('.right-arrow');
+
+rightArrow.addEventListener('click', () => {
+  // Apply slide-out class to body
+  document.body.classList.add('slide-out-left');
+
+  // Wait for animation to finish before navigating
+  setTimeout(() => {
+    window.location.href = 'fadingpetals.html'; // replace with your target page
+  }, 500); // matches CSS transition duration
+});
+
+    // --- element refs ---
+    const playButton = document.querySelector('.play-button');
+    const pauseButton = document.querySelector('.pause-button');
+    const circle = document.querySelector('.circle-image');
+    const expandButton = document.querySelector('.center-button');
+    const imageSrc = 'images/garden.jpg';
+    const videoSrc = 'images/garden-video.mp4';
+    
+    const poemText = `In May, when sea-winds pierced our solitudes,
+  I found the fresh Rhodora in the woods,
+  Spreading its leafless blooms in a damp nook,
+  To please the desert and the sluggish brook.
+  The purple petals fallen in the pool
+  Made the black water with their beauty gay;
+  Here might the red-bird come his plumes to cool,
+  And court the flower that cheapens his array.
+  Rhodora! if the sages ask thee why
+  This charm is wasted on the earth and sky,
+  Tell them, dear, that, if eyes were made for seeing,
+  Then beauty is its own excuse for Being;
+  Why thou wert there, O rival of the rose!
+  I never thought to ask; I never knew;
+  But in my simple ignorance suppose
+  The self-same power that brought me there, brought you.`;
+  
+    let videoEl = null;
+    let expandedVideo = null;
+    let overlayStartRect = null;
+    let preExpandWasVideo = false;
+  
+    // --- PLAY ---
+    playButton.addEventListener('click', () => {
+      const overlay = document.querySelector('.fullscreen-overlay');
+      if (overlay) {
+        const ovVideo = overlay.querySelector('video');
+        if (ovVideo) ovVideo.play();
+        return;
+      }
+  
+      const mediaLayer = circle.querySelector('.media-layer');
+      mediaLayer.innerHTML = '';
+      const vid = document.createElement('video');
+      vid.src = videoSrc;
+      vid.autoplay = true;
+      vid.loop = true;
+      vid.muted = true;
+      vid.style.width = '100%';
+      vid.style.height = '100%';
+      vid.style.objectFit = 'cover';
+      vid.style.borderRadius = '50%';
+      mediaLayer.appendChild(vid);
+      videoEl = vid;
+  
+      // Hide the title when playing video
+      const title = circle.querySelector('.title');
+      if (title) title.style.opacity = 0;
+    });
+  
+    // --- PAUSE ---
+    pauseButton.addEventListener('click', () => {
+      const overlay = document.querySelector('.fullscreen-overlay');
+      if (overlay) {
+        const ovVideo = overlay.querySelector('video');
+        if (ovVideo) ovVideo.pause();
+        return;
+      }
+  
+      if (videoEl) {
+        videoEl.pause();
+        videoEl.remove();
+        videoEl = null;
+      }
+  
+      const mediaLayer = circle.querySelector('.media-layer');
+      mediaLayer.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = imageSrc;
+      img.alt = 'Circular Image';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      mediaLayer.appendChild(img);
+  
+      // Show the title when image is displayed
+      const title = circle.querySelector('.title');
+      if (title) title.style.opacity = 1;
+    });
+  
+    // --- EXPAND ---
+    expandButton.addEventListener('click', () => {
+      const existingOverlay = document.querySelector('.fullscreen-overlay');
+      if (existingOverlay) {
+        shrinkOverlay(existingOverlay);
+        return;
+      }
+  
+      const rect = circle.getBoundingClientRect();
+      overlayStartRect = rect;
+      preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
+  
+      const overlay = document.createElement('div');
+      overlay.className = 'fullscreen-overlay';
+      overlay.style.top = `${rect.top + rect.height / 2}px`;
+      overlay.style.left = `${rect.left + rect.width / 2}px`;
+      overlay.style.width = `${rect.width}px`;
+      overlay.style.height = `${rect.height}px`;
+      overlay.style.borderRadius = '50%';
+      overlay.style.transform = 'translate(-50%,-50%)';
+      overlay.style.position = 'fixed';
+      overlay.style.zIndex = '0';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.overflow = 'hidden';
+      overlay.style.background = 'transparent';
+      overlay.style.transition = 'all .6s ease-in-out';
+  
+      // --- Add media (image/video) ---
+      if (circle.querySelector('video') || videoEl) {
+        const v = document.createElement('video');
+        v.src = videoSrc;
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = true;
+        v.style.position = 'absolute';
+        v.style.top = '0';
+        v.style.left = '0';
+        v.style.width = '100%';
+        v.style.height = '100%';
+        v.style.objectFit = 'cover';
+        v.style.borderRadius = '0';
+        overlay.appendChild(v);
+        expandedVideo = v;
+      } else {
+        const i = document.createElement('img');
+        i.src = imageSrc;
+        i.style.position = 'absolute';
+        i.style.top = '0';
+        i.style.left = '0';
+        i.style.width = '100%';
+        i.style.height = '100%';
+        i.style.objectFit = 'cover';
+        i.style.borderRadius = '0';
+        overlay.appendChild(i);
+        expandedVideo = null;
+      }
+  
+      // --- ADD POEM ---
+      const poemDiv = document.createElement('div');
+      poemDiv.className = 'fullscreen-poem';
+      poemDiv.innerText = poemText;
+      overlay.appendChild(poemDiv);
+  
+      document.body.insertBefore(overlay, document.body.firstChild);
+  
+      const originalBg = circle.style.background;
+      circle.style.background = 'transparent';
+      circle.innerHTML = '';
+  
+      requestAnimationFrame(() => {
+        overlay.classList.add('expanded');
+        overlay.style.top = '50%';
+        overlay.style.left = '50%';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.borderRadius = '0';
+      });
+  
+      const onExpandEnd = (ev) => {
+        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+          document.body.classList.add('white-ui');
+          overlay.removeEventListener('transitionend', onExpandEnd);
+        }
+      };
+      overlay.addEventListener('transitionend', onExpandEnd);
+  
+      overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
+    });
+  
+    // --- SHRINK ---
+    function shrinkOverlay(overlay, originalBg = '#ddd') {
+      if (!overlay || !overlayStartRect) {
+        overlay && overlay.remove();
+        document.body.classList.remove('white-ui');
+        return;
+      }
+  
+      overlay.classList.remove('expanded');
+      overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
+      overlay.style.left = `${overlayStartRect.left + overlayStartRect.width / 2}px`;
+      overlay.style.width = `${overlayStartRect.width}px`;
+      overlay.style.height = `${overlayStartRect.height}px`;
+      overlay.style.borderRadius = '50%';
+  
+      const onShrinkEnd = (ev) => {
+        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+          overlay.removeEventListener('transitionend', onShrinkEnd);
+          overlay.remove();
+          document.body.classList.remove('white-ui');
+  
+          // --- REMOVE POEM ---
+          const poemEl = overlay.querySelector('.fullscreen-poem');
+          if (poemEl) poemEl.remove();
+  
+          // Restore circle background
+          circle.style.background = originalBg || '#ddd';
+  
+          // Re-add media layer
+          let mediaLayer = circle.querySelector('.media-layer');
+          if (!mediaLayer) {
+            mediaLayer = document.createElement('div');
+            mediaLayer.className = 'media-layer';
+            circle.appendChild(mediaLayer);
+          } else {
+            mediaLayer.innerHTML = '';
+          }
+  
+          if (expandedVideo || preExpandWasVideo) {
+            const v = document.createElement('video');
+            v.src = videoSrc;
+            v.autoplay = true;
+            v.loop = true;
+            v.muted = true;
+            v.style.width = '100%';
+            v.style.height = '100%';
+            v.style.objectFit = 'cover';
+            v.style.borderRadius = '50%';
+            mediaLayer.appendChild(v);
+            videoEl = v;
+          } else {
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.alt = 'Circular Image';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            mediaLayer.appendChild(img);
+          }
+  
+          // Restore title
+          let title = circle.querySelector('.title');
+          if (!title) {
+            title = document.createElement('div');
+            title.className = 'title';
+            title.innerText = 'To Daffodils';
+            circle.appendChild(title);
+          }
+          title.style.opacity = 1;
+  
+          expandedVideo = null;
+          preExpandWasVideo = false;
+        }
+      };
+  
+      overlay.addEventListener('transitionend', onShrinkEnd);
+    }
+
+    const menuButton = document.querySelector('.menu-button');
+const sideMenu = document.querySelector('.side-menu');
+const menuOverlay = document.querySelector('.menu-overlay');
+
+menuButton.addEventListener('click', () => {
+  sideMenu.classList.toggle('open');
+  menuOverlay.classList.toggle('active');
+});
+
+// close menu when clicking outside
+menuOverlay.addEventListener('click', () => {
+  sideMenu.classList.remove('open');
+  menuOverlay.classList.remove('active');
+});
+const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
+
+menuItems.forEach(item => {
+  item.addEventListener('click', (e) => {
+    const submenu = item.nextElementSibling;
+    if (!submenu) return;
+    submenu.classList.toggle('open');
+  });
+});
+
+
+  </script>
+  
+  
+  
+</body>
+</html>
