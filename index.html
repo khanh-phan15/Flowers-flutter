@@ -175,12 +175,78 @@
     .white-ui .play-button { border-left-color: #fff !important; }
     .white-ui .center-button img { filter: brightness(0) invert(1) !important; }
 
-    /* small responsiveness */
-    @media (max-width:900px) {
-      .intro { font-size:11pt; max-width:80%; }
-      .circle-image { width:40vmin; height:40vmin; }
-      .flowers, .flutter { font-size:15vw; }
-    }
+/* Slide-in menu panel */
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -400px; /* hidden by default */
+  width: 300px;
+  height: 100vh;
+  background: #f5ffd4;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 1000; /* above everything */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'BodyFont', sans-serif;
+}
+.side-menu a {
+  text-decoration: none;
+  color: #333; /* or any color you want for menu text */
+  transition: color 0.3s ease;
+  font-size: 13pt;
+}
+
+/* Optional: hover effect */
+.side-menu a:hover {
+  color: #314C1C; /* highlight color on hover */
+}
+.side-menu.open {
+  right: 0; /* slide in */
+}
+
+/* optional: overlay behind menu when open */
+.menu-overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background: rgba(0,0,0,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  z-index: 900;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.side-menu .menu-item > a {
+  cursor: pointer;
+  display: block;
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
+
+.side-menu .submenu {
+  max-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: max-height 0.3s ease;
+  padding-left: 1rem;
+}
+
+.side-menu .submenu.open {
+  max-height: 500px; /* large enough to show all sections */
+}
+
+
   </style>
 </head>
 <body>
@@ -190,6 +256,34 @@
       <a href="index.html" class="home-button">HOME</a>
       <div class="flowers">FLOWERS</div>
     </div>
+<!-- Menu overlay -->
+<div class="menu-overlay"></div>
+
+<!-- Slide-in menu content -->
+<div class="side-menu">
+  <div class="menu-item">
+    <a href="#">CHAPTER 1</a>
+    <div class="submenu">
+      <a href="rhodora.html">The Rhodora</a>
+      <a href="fadingpetals.html">Fading Petals</a>
+    </div>
+  </div>
+  <div class="menu-item">
+    <a href="#">CHAPTER 2</a>
+    <div class="submenu">
+      <a href="todaffodils.html">To Daffodils</a>
+
+    </div>
+  </div>
+  <div class="menu-item">
+    <a href="#">CHAPTER 3</a>
+    <div class="submenu">
+      <a href="garden.html">The Garden of Love</a>
+      <a href="woman.html">Every Woman Lives Like a Flower</a>
+    </div>
+  </div>
+</div>
+
 
     <!-- Right -->
     <div class="side-group right-group">
@@ -463,6 +557,31 @@
       };
       overlay.addEventListener('transitionend', onShrinkEnd);
     }
+    const menuButton = document.querySelector('.menu-button');
+const sideMenu = document.querySelector('.side-menu');
+const menuOverlay = document.querySelector('.menu-overlay');
+
+menuButton.addEventListener('click', () => {
+  sideMenu.classList.toggle('open');
+  menuOverlay.classList.toggle('active');
+});
+
+// close menu when clicking outside
+menuOverlay.addEventListener('click', () => {
+  sideMenu.classList.remove('open');
+  menuOverlay.classList.remove('active');
+});
+const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
+
+menuItems.forEach(item => {
+  item.addEventListener('click', (e) => {
+    const submenu = item.nextElementSibling;
+    if (!submenu) return;
+    submenu.classList.toggle('open');
+  });
+});
+
+
   </script>
   
 </body>
