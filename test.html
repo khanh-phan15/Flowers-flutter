@@ -186,6 +186,7 @@
       overflow: hidden;
       background: transparent;
       transition: all .6s ease-in-out;
+      pointer-events: auto;
     }
     .fullscreen-overlay video, .fullscreen-overlay img {
       width: 100%;
@@ -228,11 +229,7 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    @media (max-width:900px) {
-      .intro { font-size:11pt; max-width:80%; }
-      .circle-image { width:40vmin; height:40vmin; }
-      .flowers, .flutter { font-size:15vw; }
-    }
+
     .fullscreen-poem {
   position: absolute;
   top: 50%;
@@ -244,9 +241,26 @@
   text-align: left;
   white-space: pre-line; /* keep line breaks */
   max-width: 80%;
+  max-height: 50vh;    
+  overflow-y: auto;     /* enable vertical scrolling */
+  padding: 2rem;        /* optional, for spacing inside box */
   z-index: 5;
-  pointer-events: none;
+  pointer-events: auto; /* allow scrolling */
+  border-radius: 8px;  /* optional, rounded edges */
 }
+.fullscreen-poem {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.6) transparent;
+}
+.fullscreen-poem::-webkit-scrollbar {
+  width: 8px;
+}
+.fullscreen-poem::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 4px;
+}
+
+
 
   </style>
 </head>
@@ -269,7 +283,7 @@
       <div class="media-layer">
         <img src="images/Rhodora.jpg" alt="Circular Image">
       </div>
-      <div class="title">The Rhodora</div>
+      <div class="title">Fading Petals</div>
 
     </div>
     <div class="left-arrow"><</div>
@@ -294,22 +308,78 @@
     const imageSrc = 'images/Rhodora.jpg';
     const videoSrc = 'images/Rhodora-video.mp4';
     
-    const poemText = `In May, when sea-winds pierced our solitudes,
-  I found the fresh Rhodora in the woods,
-  Spreading its leafless blooms in a damp nook,
-  To please the desert and the sluggish brook.
-  The purple petals fallen in the pool
-  Made the black water with their beauty gay;
-  Here might the red-bird come his plumes to cool,
-  And court the flower that cheapens his array.
-  Rhodora! if the sages ask thee why
-  This charm is wasted on the earth and sky,
-  Tell them, dear, that, if eyes were made for seeing,
-  Then beauty is its own excuse for Being;
-  Why thou wert there, O rival of the rose!
-  I never thought to ask; I never knew;
-  But in my simple ignorance suppose
-  The self-same power that brought me there, brought you.`;
+    const poemText = `In gardens kissed by sunlight’s gentle grace,
+Where flowers bloom in nature’s sweet embrace,
+A poignant tale of beauty takes its flight,
+As fading petals tell of life’s twilight.
+Each petal, like a moment, shines so bright,
+A fragile gem in morning’s golden light,
+Yet in their vibrant hues, a truth they bear,
+That beauty’s glory is not meant to wear.
+Oh, fading petals, whispers of the breeze,
+You dance upon the limbs of ancient trees,
+With every petal’s fall, a story told,
+Of time’s embrace, as youth grows dim and old.
+The rose, once vivid red, now bows its head,
+Its petals like the tears of angels shed,
+A mirror of our lives, so brief and bright,
+Yet in their passing, fills the heart with light.
+The tulip, once a vibrant burst of spring,
+Now droops its head, a melancholy thing,
+Yet in its fading, speaks of cycles true,
+As life gives way to life, in seasons through.
+Like fallen stars that grace the earthly ground,
+These petals paint a picture all around,
+Of beauty’s dance, a waltz so bittersweet,
+As youth and time in tender moments meet.
+The lily, like a bridal gown so fair,
+Unfurls its petals in the morning air,
+But with each passing day, they gently wane,
+A metaphor for life’s transient reign.
+The daisy, with its petals white and gold,
+Speaks of innocence and stories yet untold,
+Its petals close as daylight fades to night,
+A gentle nod to the fleetingness of light.
+Yet in this fading, there’s a truth to find,
+That beauty’s essence lives within the mind,
+For though the petals wither, frail and thin,
+The soul’s sweet bloom forever lies within.
+So let us not despair in fading’s call,
+For life’s true beauty lies beyond the fall,
+In memories and moments that we share,
+A legacy of love beyond compare.
+“Fading Petals,” whispers nature’s tale,
+Of beauty fleeting, yet in memories, prevail,
+Embrace the transient, let your heart be free,
+For even fading petals hold a legacy.
+In every petal’s curve and delicate line,
+A story of existence, both yours and mine,
+For as the petals fade and gently fall,
+They leave behind a memory, a story to recall.
+And as the seasons shift, the flowers bloom anew,
+Each petal’s life is brief, yet its beauty shines through,
+So let us learn from petals, wisps of life’s design,
+To treasure every moment, and let our spirits shine.
+In gardens of our lives, where time’s gentle breeze,
+Whispers of fading petals among the trees,
+We find a truth profound, a lesson to keep,
+That even in fading, our beauty runs deep.
+For just as petals wither, they leave behind a trace,
+A memory of their presence, a moment’s gentle grace,
+So too shall we, in life’s grand symphony,
+Leave behind a legacy, a touch of eternity.
+“Fading Petals” teach us to embrace the now,
+To hold our moments gently, to cherish every vow,
+For like the petals falling in graceful surrender,
+Life’s beauty lies in both its bloom and its tender.
+So let our hearts be open, like petals to the sky,
+As we dance through the seasons, as the years go by,
+And when our own petals fall, let them paint the air,
+With the colors of our love, a beauty beyond compare.
+In every bloom and withering, in petals’ rise and fall,
+We find the rhythm of life, a story told to all,
+“Fading Petals,” a reminder of life’s transient art,
+A reflection of our journey, etched on nature’s heart.`;
   
     let videoEl = null;
     let expandedVideo = null;
@@ -434,10 +504,21 @@
       }
   
       // --- ADD POEM ---
-      const poemDiv = document.createElement('div');
-      poemDiv.className = 'fullscreen-poem';
-      poemDiv.innerText = poemText;
-      overlay.appendChild(poemDiv);
+      const poemWrapper = document.createElement('div');
+poemWrapper.style.maxHeight = '55vh';
+poemWrapper.style.overflowY = 'auto';
+poemWrapper.style.pointerEvents = 'auto';
+poemWrapper.style.width = '100%';
+poemWrapper.style.display = 'flex';
+poemWrapper.style.justifyContent = 'center';
+
+const poemDiv = document.createElement('div');
+poemDiv.className = 'fullscreen-poem';
+poemDiv.innerText = poemText;
+
+poemWrapper.appendChild(poemDiv);
+overlay.appendChild(poemWrapper);
+
   
       document.body.insertBefore(overlay, document.body.firstChild);
   
@@ -463,6 +544,20 @@
       overlay.addEventListener('transitionend', onExpandEnd);
   
       overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
+      poemWrapper.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent overlay click from firing
+});
+poemDiv.addEventListener('click', (e) => {
+  e.stopPropagation(); // same for inner poem div
+});
+poemWrapper.style.maxHeight = '55vh';
+poemWrapper.style.overflowY = 'auto';
+poemWrapper.style.width = '80%';
+poemWrapper.style.display = 'flex';
+poemWrapper.style.justifyContent = 'center';
+poemWrapper.style.pointerEvents = 'auto';
+
+
     });
   
     // --- SHRINK ---
@@ -543,8 +638,6 @@
       overlay.addEventListener('transitionend', onShrinkEnd);
     }
   </script>
-  
-  
   
 </body>
 </html>

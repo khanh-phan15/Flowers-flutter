@@ -88,7 +88,7 @@
     .intro {
       font-family:'BodyFont', sans-serif;
       font-size:13pt;
-      max-width:50%;
+      max-width:100%;
       text-align:center;
       margin-bottom:4rem;
       transition: color .36s ease;
@@ -228,11 +228,6 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    @media (max-width:900px) {
-      .intro { font-size:11pt; max-width:80%; }
-      .circle-image { width:40vmin; height:40vmin; }
-      .flowers, .flutter { font-size:15vw; }
-    }
     .fullscreen-poem {
   position: absolute;
   top: 50%;
@@ -247,10 +242,13 @@
   z-index: 5;
   pointer-events: none;
 }
-
+.slide-out-left {
+  transform: translateX(-100%);
+}
   </style>
 </head>
 <body>
+
 <div class="container">
   <!-- Left -->
   <div class="side-group left-group">
@@ -273,7 +271,7 @@
 
     </div>
     <div class="left-arrow"><</div>
-    <div class="right-arrow">></div>
+    <div class="right-arrow" data-target="fadingpetals.html">></div>
 
     <div class="control-bar">
       <div class="pause-button">⏸</div>
@@ -286,6 +284,18 @@
 </div>
 
 <script>
+  const rightArrow = document.querySelector('.right-arrow');
+
+rightArrow.addEventListener('click', () => {
+  // Apply slide-out class to body
+  document.body.classList.add('slide-out-left');
+
+  // Wait for animation to finish before navigating
+  setTimeout(() => {
+    window.location.href = 'fadingpetals.html'; // replace with your target page
+  }, 500); // matches CSS transition duration
+});
+
     // --- element refs ---
     const playButton = document.querySelector('.play-button');
     const pauseButton = document.querySelector('.pause-button');
