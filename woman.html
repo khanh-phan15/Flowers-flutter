@@ -228,7 +228,7 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    .fullscreen-poem {
+.fullscreen-poem {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -239,8 +239,24 @@
   text-align: left;
   white-space: pre-line; /* keep line breaks */
   max-width: 80%;
+  max-height: 50vh;    
+  overflow-y: auto;     /* enable vertical scrolling */
+  padding: 2rem;        /* optional, for spacing inside box */
   z-index: 5;
-  pointer-events: none;
+  pointer-events: auto; /* allow scrolling */
+  border-radius: 8px;  /* optional, rounded edges */
+}
+.fullscreen-poem {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.6) transparent;
+}
+.fullscreen-poem::-webkit-scrollbar {
+  width: 8px;
+}
+.fullscreen-poem::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 4px;
+
 }
 .slide-out-left {
   transform: translateX(-100%);
@@ -567,10 +583,22 @@ In her resilience, life’s beauty is found.”`;
       }
   
       // --- ADD POEM ---
-      const poemDiv = document.createElement('div');
-      poemDiv.className = 'fullscreen-poem';
-      poemDiv.innerText = poemText;
-      overlay.appendChild(poemDiv);
+   // --- ADD POEM ---
+   const poemWrapper = document.createElement('div');
+poemWrapper.style.maxHeight = '55vh';
+poemWrapper.style.overflowY = 'auto';
+poemWrapper.style.pointerEvents = 'auto';
+poemWrapper.style.width = '100%';
+poemWrapper.style.display = 'flex';
+poemWrapper.style.justifyContent = 'center';
+
+const poemDiv = document.createElement('div');
+poemDiv.className = 'fullscreen-poem';
+poemDiv.innerText = poemText;
+
+poemWrapper.appendChild(poemDiv);
+overlay.appendChild(poemWrapper);
+
   
       document.body.insertBefore(overlay, document.body.firstChild);
   
@@ -596,8 +624,21 @@ In her resilience, life’s beauty is found.”`;
       overlay.addEventListener('transitionend', onExpandEnd);
   
       overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
+      poemWrapper.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent overlay click from firing
+});
+poemDiv.addEventListener('click', (e) => {
+  e.stopPropagation(); // same for inner poem div
+});
+poemWrapper.style.maxHeight = '55vh';
+poemWrapper.style.overflowY = 'auto';
+poemWrapper.style.width = '80%';
+poemWrapper.style.display = 'flex';
+poemWrapper.style.justifyContent = 'center';
+poemWrapper.style.pointerEvents = 'auto';
+
+
     });
-  
     // --- SHRINK ---
     function shrinkOverlay(overlay, originalBg = '#ddd') {
       if (!overlay || !overlayStartRect) {
