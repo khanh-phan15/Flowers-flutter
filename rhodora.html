@@ -228,20 +228,62 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    .fullscreen-poem {
+.fullscreen-poem {
   position: absolute;
-  top: 50%;
+  top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
   font-family: 'BodyFont', sans-serif;
   font-size: 1.2rem;
   text-align: left;
-  white-space: pre-line; /* keep line breaks */
   max-width: 80%;
   z-index: 5;
   pointer-events: none;
+  gap: 0.5em; /* space between lines */
 }
+.poem-line {
+  display: inline-block;
+  line-height: 0.9;
+  text-align: left;
+
+}
+.fullscreen-poem {
+  display: flex;
+  flex-direction: column;
+  column-count: 2;
+  align-items: left;
+  white-space: pre-line;
+
+}
+
+
+/* Each word fades in and out */
+.fullscreen-poem span {
+  opacity: 0;
+  display: inline-block;
+  animation: fadeInOut 4s infinite;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+
+/* Keyframes for fading */
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* --- Stagger each line’s start time --- */
+.poem-line:nth-child(1) span { animation-delay: calc(var(--i) * 0.2s + 0s); }
+.poem-line:nth-child(2) span { animation-delay: calc(var(--i) * 0.2s + 1s); }
+.poem-line:nth-child(3) span { animation-delay: calc(var(--i) * 0.2s + 2s); }
+.poem-line:nth-child(4) span { animation-delay: calc(var(--i) * 0.2s + 3s); }
+.poem-line:nth-child(5) span { animation-delay: calc(var(--i) * 0.2s + 4s); }
+.poem-line:nth-child(6) span { animation-delay: calc(var(--i) * 0.2s + 3s); }
+.poem-line:nth-child(7) span { animation-delay: calc(var(--i) * 0.2s + 2s); }
+.poem-line:nth-child(8) span { animation-delay: calc(var(--i) * 0.2s + 1s); }
+/* …extend as needed for all lines */
+
+
 .slide-out-left {
   transform: translateX(-100%);
 }
@@ -418,21 +460,25 @@
   const videoSrc = 'images/Rhodora-video.mp4';
   
   const poemText = `In May, when sea-winds pierced our solitudes,
-  I found the fresh Rhodora in the woods,
-  Spreading its leafless blooms in a damp nook,
-  To please the desert and the sluggish brook.
-  The purple petals fallen in the pool
-  Made the black water with their beauty gay;
-  Here might the red-bird come his plumes to cool,
-  And court the flower that cheapens his array.
-  Rhodora! if the sages ask thee why
-  This charm is wasted on the earth and sky,
-  Tell them, dear, that, if eyes were made for seeing,
-  Then beauty is its own excuse for Being;
-  Why thou wert there, O rival of the rose!
-  I never thought to ask; I never knew;
-  But in my simple ignorance suppose
-  The self-same power that brought me there, brought you.`;
+I found the fresh Rhodora in the woods,
+Spreading its leafless blooms in a damp nook,
+To please the desert and the sluggish brook.
+
+The purple petals fallen in the pool
+Made the black water with their beauty gay;
+Here might the red-bird come his plumes to cool,
+And court the flower that cheapens his array.
+
+Rhodora! if the sages ask thee why
+This charm is wasted on the earth and sky,
+Tell them, dear, that, if eyes were made for seeing,
+Then beauty is its own excuse for Being;
+
+Why thou wert there, O rival of the rose!
+I never thought to ask; I never knew;
+But in my simple ignorance suppose
+The self-same Power that brought me there, brought you.`;
+
   
   let videoEl = null;
   let expandedVideo = null;
@@ -558,9 +604,19 @@
     const poemDiv = document.createElement('div');
     poemDiv.className = 'fullscreen-poem';
     poemDiv.innerHTML = poemText
+  // Split into lines first
+  .split(/\n+/)
+  .map(line => {
+    const words = line
+      .trim()
       .split(/\s+/)
       .map((word, i) => `<span style="--i:${i}">${word}</span>`)
       .join(' ');
+    return `<div class="poem-line">${words}</div>`;
+  })
+  .join('');
+
+
     overlay.appendChild(poemDiv);
   
     document.body.insertBefore(overlay, document.body.firstChild);

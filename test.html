@@ -228,20 +228,59 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    .fullscreen-poem {
+.fullscreen-poem {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); /* keep it centered vertically & horizontally */
+  max-width: 80vw;   /* limit width so columns don’t stretch too much */
+  height: auto;      /* let height adjust naturally */
   color: white;
   font-family: 'BodyFont', sans-serif;
   font-size: 1.2rem;
   text-align: left;
-  white-space: pre-line; /* keep line breaks */
-  max-width: 80%;
+  column-count: 2;   /* two columns */
+  column-gap: 3rem;  /* space between columns */
+  overflow-y: auto;  /* scroll if content exceeds viewport */
   z-index: 5;
   pointer-events: none;
 }
+
+.poem-line {
+  display: inline-block;
+  line-height: 1.2;
+  text-align: left;
+
+}
+
+
+
+/* Each word fades in and out */
+.fullscreen-poem span {
+  opacity: 0;
+  display: inline-block;
+  animation: fadeInOut 4s infinite;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+
+/* Keyframes for fading */
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* --- Stagger each line’s start time --- */
+.poem-line:nth-child(1) span { animation-delay: calc(var(--i) * 0.2s + 0s); }
+.poem-line:nth-child(2) span { animation-delay: calc(var(--i) * 0.2s + 1s); }
+.poem-line:nth-child(3) span { animation-delay: calc(var(--i) * 0.2s + 2s); }
+.poem-line:nth-child(4) span { animation-delay: calc(var(--i) * 0.2s + 3s); }
+.poem-line:nth-child(5) span { animation-delay: calc(var(--i) * 0.2s + 4s); }
+.poem-line:nth-child(6) span { animation-delay: calc(var(--i) * 0.2s + 3s); }
+.poem-line:nth-child(7) span { animation-delay: calc(var(--i) * 0.2s + 2s); }
+.poem-line:nth-child(8) span { animation-delay: calc(var(--i) * 0.2s + 1s); }
+/* …extend as needed for all lines */
+
+
 .slide-out-left {
   transform: translateX(-100%);
 }
@@ -315,17 +354,7 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
-.fullscreen-poem span {
-  opacity: 0;
-  display: inline-block;
-  animation: fadeInOut 4s infinite;
-  animation-delay: calc(var(--i) * 0.2s); /* stagger based on index */
-}
 
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
 
 
 /* stagger each word slightly */
@@ -333,6 +362,7 @@
 .fullscreen-poem span:nth-child(2) { animation-delay: 0.2s; }
 .fullscreen-poem span:nth-child(3) { animation-delay: 0.4s; }
 /* repeat for as many words as needed, or use nth-child(odd/even) for simplicity */
+
 
 
 
@@ -381,9 +411,9 @@
     <div class="intro">CHAPTER 1: WHEN BEAUTY MOVES</div>
     <div class="circle-image show-title">
       <div class="media-layer">
-        <img src="images/Rhodora.jpg" alt="Circular Image">
+        <img src="images/Fadingpetals.jpg" alt="Circular Image">
       </div>
-      <div class="title">The Rhodora</div>
+      <div class="title">Fading Petals</div>
 
     </div>
     <div class="left-arrow"><</div>
@@ -414,98 +444,34 @@
   const pauseButton = document.querySelector('.pause-button');
   const circle = document.querySelector('.circle-image');
   const expandButton = document.querySelector('.center-button');
-  const imageSrc = 'images/Rhodora.jpg';
-  const videoSrc = 'images/Rhodora-video.mp4';
+  const imageSrc = 'images/Fadingpetals.jpg';
+  const videoSrc = 'images/Fadingpetals-video.mp4';
   
   const poemText = `In gardens kissed by sunlight’s gentle grace,
 Where flowers bloom in nature’s sweet embrace,
 A poignant tale of beauty takes its flight,
-As fading petals tell of life’s twilight.
-
-Each petal, like a moment, shines so bright,
-A fragile gem in morning’s golden light,
-Yet in their vibrant hues, a truth they bear,
-That beauty’s glory is not meant to wear.
-
-Oh, fading petals, whispers of the breeze,
-You dance upon the limbs of ancient trees,
-With every petal’s fall, a story told,
-Of time’s embrace, as youth grows dim and old.
-
-The rose, once vivid red, now bows its head,
-Its petals like the tears of angels shed,
-A mirror of our lives, so brief and bright,
-Yet in their passing, fills the heart with light.
-
-The tulip, once a vibrant burst of spring,
-Now droops its head, a melancholy thing,
-Yet in its fading, speaks of cycles true,
-As life gives way to life, in seasons through.
-
-Like fallen stars that grace the earthly ground,
-These petals paint a picture all around,
-Of beauty’s dance, a waltz so bittersweet,
-As youth and time in tender moments meet.
-
-The lily, like a bridal gown so fair,
-Unfurls its petals in the morning air,
-But with each passing day, they gently wane,
-A metaphor for life’s transient reign.
-
-The daisy, with its petals white and gold,
-Speaks of innocence and stories yet untold,
-Its petals close as daylight fades to night,
-A gentle nod to the fleetingness of light.
-
-Yet in this fading, there’s a truth to find,
-That beauty’s essence lives within the mind,
-For though the petals wither, frail and thin,
-The soul’s sweet bloom forever lies within.
-
-So let us not despair in fading’s call,
-For life’s true beauty lies beyond the fall,
-In memories and moments that we share,
-A legacy of love beyond compare.
+As fading petals tell of life’s twilight.\n\n
 
 “Fading Petals,” whispers nature’s tale,
 Of beauty fleeting, yet in memories, prevail,
 Embrace the transient, let your heart be free,
-For even fading petals hold a legacy.
-
-In every petal’s curve and delicate line,
-A story of existence, both yours and mine,
-For as the petals fade and gently fall,
-They leave behind a memory, a story to recall.
-
-And as the seasons shift, the flowers bloom anew,
-Each petal’s life is brief, yet its beauty shines through,
-So let us learn from petals, wisps of life’s design,
-To treasure every moment, and let our spirits shine.
-
-In gardens of our lives, where time’s gentle breeze,
-Whispers of fading petals among the trees,
-We find a truth profound, a lesson to keep,
-That even in fading, our beauty runs deep.
-
-For just as petals wither, they leave behind a trace,
-A memory of their presence, a moment’s gentle grace,
-So too shall we, in life’s grand symphony,
-Leave behind a legacy, a touch of eternity.
+For even fading petals hold a legacy.\n\n
 
 “Fading Petals” teach us to embrace the now,
 To hold our moments gently, to cherish every vow,
 For like the petals falling in graceful surrender,
-Life’s beauty lies in both its bloom and its tender.
+Life’s beauty lies in both its bloom and its tender.\n\n
 
 So let our hearts be open, like petals to the sky,
 As we dance through the seasons, as the years go by,
 And when our own petals fall, let them paint the air,
-With the colors of our love, a beauty beyond compare.
+With the colors of our love, a beauty beyond compare.\n\n
 
 In every bloom and withering, in petals’ rise and fall,
 We find the rhythm of life, a story told to all,
 “Fading Petals,” a reminder of life’s transient art,
 A reflection of our journey, etched on nature’s heart.`;
+
   
   let videoEl = null;
   let expandedVideo = null;
@@ -630,11 +596,35 @@ A reflection of our journey, etched on nature’s heart.`;
     // --- ADD POEM WITH STAGGERED FADE ---
     const poemDiv = document.createElement('div');
     poemDiv.className = 'fullscreen-poem';
-    poemDiv.innerHTML = poemText
-      .split(/\s+/)
-      .map((word, i) => `<span style="--i:${i}">${word}</span>`)
-      .join(' ');
-    overlay.appendChild(poemDiv);
+    // --- ADD POEM WITH STAGGERED STANZA FADE ---
+const lines = poemText.split(/\n+/).map(line => line.trim()).filter(line => line);
+const stanzas = [];
+for (let i = 0; i < lines.length; i += 4) {
+  stanzas.push(lines.slice(i, i + 4));
+}
+
+// Group stanzas into blocks of 3 stanzas each
+const stanzaBlocks = [];
+for (let i = 0; i < stanzas.length; i += 3) {
+  stanzaBlocks.push(stanzas.slice(i, i + 3));
+}
+
+let html = '';
+stanzaBlocks.forEach((block, blockIndex) => {
+  block.forEach((stanza) => {
+    stanza.forEach((line) => {
+      const words = line.split(/\s+/)
+        .map((word, i) => `<span style="--i:${i}">${word}</span>`)
+        .join(' ');
+      html += `<div class="poem-line" style="animation-delay:${blockIndex * 6}s">${words}</div>`;
+    });
+  });
+});
+
+poemDiv.innerHTML = html;
+overlay.appendChild(poemDiv);
+
+
   
     document.body.insertBefore(overlay, document.body.firstChild);
   
