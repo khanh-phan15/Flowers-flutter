@@ -186,7 +186,6 @@
       overflow: hidden;
       background: transparent;
       transition: all .6s ease-in-out;
-      pointer-events: auto;
     }
     .fullscreen-overlay video, .fullscreen-overlay img {
       width: 100%;
@@ -229,7 +228,6 @@
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-
     .fullscreen-poem {
   position: absolute;
   top: 50%;
@@ -241,23 +239,14 @@
   text-align: left;
   white-space: pre-line; /* keep line breaks */
   max-width: 80%;
-  max-height: 50vh;    
-  overflow-y: auto;     /* enable vertical scrolling */
-  padding: 2rem;        /* optional, for spacing inside box */
   z-index: 5;
-  pointer-events: auto; /* allow scrolling */
-  border-radius: 8px;  /* optional, rounded edges */
+  pointer-events: none;
+  column-count: 2;
+  column-gap: 3rem;
+  line-height: 1.6;
 }
-.fullscreen-poem {
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: rgba(255,255,255,0.6) transparent;
-}
-.fullscreen-poem::-webkit-scrollbar {
-  width: 8px;
-}
-.fullscreen-poem::-webkit-scrollbar-thumb {
-  background-color: rgba(255,255,255,0.6);
-  border-radius: 4px;
+.slide-out-left {
+  transform: translateX(-100%);
 }
 /* Slide-in menu panel */
 .side-menu {
@@ -329,22 +318,35 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+/* Scatter animation styling */
+.scatter span {
+  display: inline-block;
+  transition: transform 1.2s ease, opacity 1.2s ease;
+}
 
+/* Apply scatter only when hovered */
+.scatter:hover span {
+  transform: translate(var(--x), var(--y)) rotate(var(--r));
+  opacity: var(--o);
+}
 
   </style>
 </head>
 <body>
+
 <div class="container">
   <!-- Left -->
   <div class="side-group left-group">
       <a href="index.html" class="home-button">HOME</a>
   </div>
-<!-- Slide-in menu content -->
-<div class="side-menu">
+  <div class="menu-overlay"></div>
+
+  <!-- Slide-in menu content -->
+  <div class="side-menu">
     <div class="menu-item">
       <a href="#">CHAPTER 1</a>
       <div class="submenu">
-        <a href="rhodora.html">The Rhodora</a>
+        <a href="rhodora.html">To Daffodils</a>
         <a href="fadingpetals.html">Fading Petals</a>
       </div>
     </div>
@@ -370,16 +372,16 @@
 
   <!-- Middle: intro, circle, controls -->
   <div class="middle">
-    <div class="intro">CHAPTER 1: WHEN BEAUTY MOVES</div>
+    <div class="intro">CHAPTER 2: THE FRAGILITY OF INNOCENCE</div>
     <div class="circle-image show-title">
       <div class="media-layer">
-        <img src="images/Fadingpetals.jpg" alt="Circular Image">
+        <img src="images/daffodils.jpg" alt="Circular Image">
       </div>
-      <div class="title">Fading Petals</div>
+      <div class="title">To Daffodils</div>
 
     </div>
-    <div class="left-arrow" data-target="rhodora.html"><</div>
-    <div class="right-arrow">></div>
+    <div class="left-arrow"><</div>
+    <div class="right-arrow" data-target="fadingpetals.html">></div>
 
     <div class="control-bar">
       <div class="pause-button">⏸</div>
@@ -390,381 +392,302 @@
     </div>
   </div>
 </div>
-
 <script>
-     const rightArrow = document.querySelector('.left-arrow');
-
-rightArrow.addEventListener('click', () => {
-  // Apply slide-out class to body
-  document.body.classList.add('slide-out-left');
-
-  // Wait for animation to finish before navigating
-  setTimeout(() => {
-    window.location.href = 'rhodora.html'; // replace with your target page
-  }, 500); // matches CSS transition duration
-});
-    // --- element refs ---
-    const playButton = document.querySelector('.play-button');
-    const pauseButton = document.querySelector('.pause-button');
-    const circle = document.querySelector('.circle-image');
-    const expandButton = document.querySelector('.center-button');
-    const imageSrc = 'images/Fadingpetals.jpg';
-    const videoSrc = 'images/Fadingpetals-video.mp4';
-    
-    const poemText = `In gardens kissed by sunlight’s gentle grace,
-Where flowers bloom in nature’s sweet embrace,
-A poignant tale of beauty takes its flight,
-As fading petals tell of life’s twilight.
-Each petal, like a moment, shines so bright,
-A fragile gem in morning’s golden light,
-Yet in their vibrant hues, a truth they bear,
-That beauty’s glory is not meant to wear.
-Oh, fading petals, whispers of the breeze,
-You dance upon the limbs of ancient trees,
-With every petal’s fall, a story told,
-Of time’s embrace, as youth grows dim and old.
-The rose, once vivid red, now bows its head,
-Its petals like the tears of angels shed,
-A mirror of our lives, so brief and bright,
-Yet in their passing, fills the heart with light.
-The tulip, once a vibrant burst of spring,
-Now droops its head, a melancholy thing,
-Yet in its fading, speaks of cycles true,
-As life gives way to life, in seasons through.
-Like fallen stars that grace the earthly ground,
-These petals paint a picture all around,
-Of beauty’s dance, a waltz so bittersweet,
-As youth and time in tender moments meet.
-The lily, like a bridal gown so fair,
-Unfurls its petals in the morning air,
-But with each passing day, they gently wane,
-A metaphor for life’s transient reign.
-The daisy, with its petals white and gold,
-Speaks of innocence and stories yet untold,
-Its petals close as daylight fades to night,
-A gentle nod to the fleetingness of light.
-Yet in this fading, there’s a truth to find,
-That beauty’s essence lives within the mind,
-For though the petals wither, frail and thin,
-The soul’s sweet bloom forever lies within.
-So let us not despair in fading’s call,
-For life’s true beauty lies beyond the fall,
-In memories and moments that we share,
-A legacy of love beyond compare.
-“Fading Petals,” whispers nature’s tale,
-Of beauty fleeting, yet in memories, prevail,
-Embrace the transient, let your heart be free,
-For even fading petals hold a legacy.
-In every petal’s curve and delicate line,
-A story of existence, both yours and mine,
-For as the petals fade and gently fall,
-They leave behind a memory, a story to recall.
-And as the seasons shift, the flowers bloom anew,
-Each petal’s life is brief, yet its beauty shines through,
-So let us learn from petals, wisps of life’s design,
-To treasure every moment, and let our spirits shine.
-In gardens of our lives, where time’s gentle breeze,
-Whispers of fading petals among the trees,
-We find a truth profound, a lesson to keep,
-That even in fading, our beauty runs deep.
-For just as petals wither, they leave behind a trace,
-A memory of their presence, a moment’s gentle grace,
-So too shall we, in life’s grand symphony,
-Leave behind a legacy, a touch of eternity.
-“Fading Petals” teach us to embrace the now,
-To hold our moments gently, to cherish every vow,
-For like the petals falling in graceful surrender,
-Life’s beauty lies in both its bloom and its tender.
-So let our hearts be open, like petals to the sky,
-As we dance through the seasons, as the years go by,
-And when our own petals fall, let them paint the air,
-With the colors of our love, a beauty beyond compare.
-In every bloom and withering, in petals’ rise and fall,
-We find the rhythm of life, a story told to all,
-“Fading Petals,” a reminder of life’s transient art,
-A reflection of our journey, etched on nature’s heart.`;
+  const rightArrow = document.querySelector('.right-arrow');
   
-    let videoEl = null;
-    let expandedVideo = null;
-    let overlayStartRect = null;
-    let preExpandWasVideo = false;
-  
-    // --- PLAY ---
-    playButton.addEventListener('click', () => {
-      const overlay = document.querySelector('.fullscreen-overlay');
-      if (overlay) {
-        const ovVideo = overlay.querySelector('video');
-        if (ovVideo) ovVideo.play();
-        return;
-      }
-  
-      const mediaLayer = circle.querySelector('.media-layer');
-      mediaLayer.innerHTML = '';
-      const vid = document.createElement('video');
-      vid.src = videoSrc;
-      vid.autoplay = true;
-      vid.loop = true;
-      vid.muted = true;
-      vid.style.width = '100%';
-      vid.style.height = '100%';
-      vid.style.objectFit = 'cover';
-      vid.style.borderRadius = '50%';
-      mediaLayer.appendChild(vid);
-      videoEl = vid;
-  
-      // Hide the title when playing video
-      const title = circle.querySelector('.title');
-      if (title) title.style.opacity = 0;
-    });
-  
-    // --- PAUSE ---
-    pauseButton.addEventListener('click', () => {
-      const overlay = document.querySelector('.fullscreen-overlay');
-      if (overlay) {
-        const ovVideo = overlay.querySelector('video');
-        if (ovVideo) ovVideo.pause();
-        return;
-      }
-  
-      if (videoEl) {
-        videoEl.pause();
-        videoEl.remove();
-        videoEl = null;
-      }
-  
-      const mediaLayer = circle.querySelector('.media-layer');
-      mediaLayer.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = imageSrc;
-      img.alt = 'Circular Image';
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      mediaLayer.appendChild(img);
-  
-      // Show the title when image is displayed
-      const title = circle.querySelector('.title');
-      if (title) title.style.opacity = 1;
-    });
-  
-    // --- EXPAND ---
-    expandButton.addEventListener('click', () => {
-      const existingOverlay = document.querySelector('.fullscreen-overlay');
-      if (existingOverlay) {
-        shrinkOverlay(existingOverlay);
-        return;
-      }
-  
-      const rect = circle.getBoundingClientRect();
-      overlayStartRect = rect;
-      preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
-  
-      const overlay = document.createElement('div');
-      overlay.className = 'fullscreen-overlay';
-      overlay.style.top = `${rect.top + rect.height / 2}px`;
-      overlay.style.left = `${rect.left + rect.width / 2}px`;
-      overlay.style.width = `${rect.width}px`;
-      overlay.style.height = `${rect.height}px`;
-      overlay.style.borderRadius = '50%';
-      overlay.style.transform = 'translate(-50%,-50%)';
-      overlay.style.position = 'fixed';
-      overlay.style.zIndex = '0';
-      overlay.style.display = 'flex';
-      overlay.style.justifyContent = 'center';
-      overlay.style.alignItems = 'center';
-      overlay.style.overflow = 'hidden';
-      overlay.style.background = 'transparent';
-      overlay.style.transition = 'all .6s ease-in-out';
-  
-      // --- Add media (image/video) ---
-      if (circle.querySelector('video') || videoEl) {
-        const v = document.createElement('video');
-        v.src = videoSrc;
-        v.autoplay = true;
-        v.loop = true;
-        v.muted = true;
-        v.style.position = 'absolute';
-        v.style.top = '0';
-        v.style.left = '0';
-        v.style.width = '100%';
-        v.style.height = '100%';
-        v.style.objectFit = 'cover';
-        v.style.borderRadius = '0';
-        overlay.appendChild(v);
-        expandedVideo = v;
-      } else {
-        const i = document.createElement('img');
-        i.src = imageSrc;
-        i.style.position = 'absolute';
-        i.style.top = '0';
-        i.style.left = '0';
-        i.style.width = '100%';
-        i.style.height = '100%';
-        i.style.objectFit = 'cover';
-        i.style.borderRadius = '0';
-        overlay.appendChild(i);
-        expandedVideo = null;
-      }
-  
-      // --- ADD POEM ---
-      const poemWrapper = document.createElement('div');
-poemWrapper.style.maxHeight = '55vh';
-poemWrapper.style.overflowY = 'auto';
-poemWrapper.style.pointerEvents = 'auto';
-poemWrapper.style.width = '100%';
-poemWrapper.style.display = 'flex';
-poemWrapper.style.justifyContent = 'center';
-
-const poemDiv = document.createElement('div');
-poemDiv.className = 'fullscreen-poem';
-poemDiv.innerText = poemText;
-
-poemWrapper.appendChild(poemDiv);
-overlay.appendChild(poemWrapper);
-
-  
-      document.body.insertBefore(overlay, document.body.firstChild);
-  
-      const originalBg = circle.style.background;
-      circle.style.background = 'transparent';
-      circle.innerHTML = '';
-  
-      requestAnimationFrame(() => {
-        overlay.classList.add('expanded');
-        overlay.style.top = '50%';
-        overlay.style.left = '50%';
-        overlay.style.width = '100vw';
-        overlay.style.height = '100vh';
-        overlay.style.borderRadius = '0';
-      });
-  
-      const onExpandEnd = (ev) => {
-        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
-          document.body.classList.add('white-ui');
-          overlay.removeEventListener('transitionend', onExpandEnd);
-        }
-      };
-      overlay.addEventListener('transitionend', onExpandEnd);
-  
-      overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
-      poemWrapper.addEventListener('click', (e) => {
-  e.stopPropagation(); // prevent overlay click from firing
-});
-poemDiv.addEventListener('click', (e) => {
-  e.stopPropagation(); // same for inner poem div
-});
-poemWrapper.style.maxHeight = '55vh';
-poemWrapper.style.overflowY = 'auto';
-poemWrapper.style.width = '80%';
-poemWrapper.style.display = 'flex';
-poemWrapper.style.justifyContent = 'center';
-poemWrapper.style.pointerEvents = 'auto';
-
-
-    });
-  
-    // --- SHRINK ---
-    function shrinkOverlay(overlay, originalBg = '#ddd') {
-      if (!overlay || !overlayStartRect) {
-        overlay && overlay.remove();
-        document.body.classList.remove('white-ui');
-        return;
-      }
-  
-      overlay.classList.remove('expanded');
-      overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
-      overlay.style.left = `${overlayStartRect.left + overlayStartRect.width / 2}px`;
-      overlay.style.width = `${overlayStartRect.width}px`;
-      overlay.style.height = `${overlayStartRect.height}px`;
-      overlay.style.borderRadius = '50%';
-  
-      const onShrinkEnd = (ev) => {
-        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
-          overlay.removeEventListener('transitionend', onShrinkEnd);
-          overlay.remove();
-          document.body.classList.remove('white-ui');
-  
-          // --- REMOVE POEM ---
-          const poemEl = overlay.querySelector('.fullscreen-poem');
-          if (poemEl) poemEl.remove();
-  
-          // Restore circle background
-          circle.style.background = originalBg || '#ddd';
-  
-          // Re-add media layer
-          let mediaLayer = circle.querySelector('.media-layer');
-          if (!mediaLayer) {
-            mediaLayer = document.createElement('div');
-            mediaLayer.className = 'media-layer';
-            circle.appendChild(mediaLayer);
-          } else {
-            mediaLayer.innerHTML = '';
-          }
-  
-          if (expandedVideo || preExpandWasVideo) {
-            const v = document.createElement('video');
-            v.src = videoSrc;
-            v.autoplay = true;
-            v.loop = true;
-            v.muted = true;
-            v.style.width = '100%';
-            v.style.height = '100%';
-            v.style.objectFit = 'cover';
-            v.style.borderRadius = '50%';
-            mediaLayer.appendChild(v);
-            videoEl = v;
-          } else {
-            const img = document.createElement('img');
-            img.src = imageSrc;
-            img.alt = 'Circular Image';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            mediaLayer.appendChild(img);
-          }
-  
-          // Restore title
-          let title = circle.querySelector('.title');
-          if (!title) {
-            title = document.createElement('div');
-            title.className = 'title';
-            title.innerText = 'Fading Petals';
-            circle.appendChild(title);
-          }
-          title.style.opacity = 1;
-  
-          expandedVideo = null;
-          preExpandWasVideo = false;
-        }
-      };
-  
-      overlay.addEventListener('transitionend', onShrinkEnd);
-    }
-    const menuButton = document.querySelector('.menu-button');
-const sideMenu = document.querySelector('.side-menu');
-const menuOverlay = document.querySelector('.menu-overlay');
-
-menuButton.addEventListener('click', () => {
-  sideMenu.classList.toggle('open');
-  menuOverlay.classList.toggle('active');
-});
-
-// close menu when clicking outside
-menuOverlay.addEventListener('click', () => {
-  sideMenu.classList.remove('open');
-  menuOverlay.classList.remove('active');
-});
-const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
-
-menuItems.forEach(item => {
-  item.addEventListener('click', (e) => {
-    const submenu = item.nextElementSibling;
-    if (!submenu) return;
-    submenu.classList.toggle('open');
+  rightArrow.addEventListener('click', () => {
+    document.body.classList.add('slide-out-left');
+    setTimeout(() => {
+      window.location.href = 'fadingpetals.html';
+    }, 500);
   });
-});
-  </script>
   
+  // --- element refs ---
+  const playButton = document.querySelector('.play-button');
+  const pauseButton = document.querySelector('.pause-button');
+  const circle = document.querySelector('.circle-image');
+  const expandButton = document.querySelector('.center-button');
+  const imageSrc = 'images/daffodils.jpg';
+  const videoSrc = 'images/daffodils-video.mp4';
+  
+  const poemText = `Fair Daffodils, we weep to see
+  You haste away so soon;
+  As yet the early-rising sun
+  Has not attain'd his noon.
+  Stay, stay,
+  Until the hasting day
+  Has run
+  But to the even-song;
+  And, having pray'd together, we
+  Will go with you along.
+  
+  We have short time to stay, as you,
+  We have as short a spring;
+  As quick a growth to meet decay,
+  As you, or anything.
+  We die
+  As your hours do, and dry
+  Away,
+  Like to the summer's rain;
+  Or as the pearls of morning's dew,
+  Ne'er to be found again.`;
+  
+  let videoEl = null;
+  let expandedVideo = null;
+  let overlayStartRect = null;
+  let preExpandWasVideo = false;
+  
+  // --- PLAY ---
+  playButton.addEventListener('click', () => {
+    const overlay = document.querySelector('.fullscreen-overlay');
+    if (overlay) {
+      const ovVideo = overlay.querySelector('video');
+      if (ovVideo) ovVideo.play();
+      return;
+    }
+  
+    const mediaLayer = circle.querySelector('.media-layer');
+    mediaLayer.innerHTML = '';
+    const vid = document.createElement('video');
+    vid.src = videoSrc;
+    vid.autoplay = true;
+    vid.loop = true;
+    vid.muted = true;
+    vid.style.width = '100%';
+    vid.style.height = '100%';
+    vid.style.objectFit = 'cover';
+    vid.style.borderRadius = '50%';
+    mediaLayer.appendChild(vid);
+    videoEl = vid;
+  
+    const title = circle.querySelector('.title');
+    if (title) title.style.opacity = 0;
+  });
+  
+  // --- PAUSE ---
+  pauseButton.addEventListener('click', () => {
+    const overlay = document.querySelector('.fullscreen-overlay');
+    if (overlay) {
+      const ovVideo = overlay.querySelector('video');
+      if (ovVideo) ovVideo.pause();
+      return;
+    }
+  
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.remove();
+      videoEl = null;
+    }
+  
+    const mediaLayer = circle.querySelector('.media-layer');
+    mediaLayer.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    img.alt = 'Circular Image';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    mediaLayer.appendChild(img);
+  
+    const title = circle.querySelector('.title');
+    if (title) title.style.opacity = 1;
+  });
+  
+  // --- EXPAND ---
+  expandButton.addEventListener('click', () => {
+    const existingOverlay = document.querySelector('.fullscreen-overlay');
+    if (existingOverlay) {
+      shrinkOverlay(existingOverlay);
+      return;
+    }
+  
+    const rect = circle.getBoundingClientRect();
+    overlayStartRect = rect;
+    preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
+  
+    const overlay = document.createElement('div');
+    overlay.className = 'fullscreen-overlay';
+    overlay.style.top = `${rect.top + rect.height / 2}px`;
+    overlay.style.left = `${rect.left + rect.width / 2}px`;
+    overlay.style.width = `${rect.width}px`;
+    overlay.style.height = `${rect.height}px`;
+    overlay.style.borderRadius = '50%';
+    overlay.style.transform = 'translate(-50%,-50%)';
+    overlay.style.position = 'fixed';
+    overlay.style.zIndex = '0';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.overflow = 'hidden';
+    overlay.style.background = 'transparent';
+    overlay.style.transition = 'all .6s ease-in-out';
+  
+    // --- Add media (image/video) ---
+    if (circle.querySelector('video') || videoEl) {
+      const v = document.createElement('video');
+      v.src = videoSrc;
+      v.autoplay = true;
+      v.loop = true;
+      v.muted = true;
+      v.style.position = 'absolute';
+      v.style.top = '0';
+      v.style.left = '0';
+      v.style.width = '100%';
+      v.style.height = '100%';
+      v.style.objectFit = 'cover';
+      v.style.borderRadius = '0';
+      overlay.appendChild(v);
+      expandedVideo = v;
+    } else {
+      const i = document.createElement('img');
+      i.src = imageSrc;
+      i.style.position = 'absolute';
+      i.style.top = '0';
+      i.style.left = '0';
+      i.style.width = '100%';
+      i.style.height = '100%';
+      i.style.objectFit = 'cover';
+      i.style.borderRadius = '0';
+      overlay.appendChild(i);
+      expandedVideo = null;
+    }
+  
+    // --- ADD POEM WITH HOVER-DEPENDENT SCATTER ---
+    const poemDiv = document.createElement('div');
+    poemDiv.className = 'fullscreen-poem scatter';
+    poemDiv.innerHTML = poemText
+      .split(/\s+/)
+      .map(word => {
+        const x = (Math.random() - 0.5) * 180 + 'px';
+        const y = (Math.random() - 0.5) * 120 + 'px';
+        const r = (Math.random() - 0.5) * 25 + 'deg';
+        const o = Math.random() * 0.9 + 0.1;
+        return `<span style="--x:${x};--y:${y};--r:${r};--o:${o}">${word}</span>`;
+      })
+      .join(' ');
+    overlay.appendChild(poemDiv);
+  
+    document.body.insertBefore(overlay, document.body.firstChild);
+  
+    circle.style.background = 'transparent';
+    circle.innerHTML = '';
+  
+    requestAnimationFrame(() => {
+      overlay.classList.add('expanded');
+      overlay.style.top = '50%';
+      overlay.style.left = '50%';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.borderRadius = '0';
+    });
+  
+    overlay.addEventListener('transitionend', (ev) => {
+      if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+        document.body.classList.add('white-ui');
+      }
+    });
+  
+    overlay.addEventListener('click', () => shrinkOverlay(overlay));
+  });
+  
+  // --- SHRINK ---
+  function shrinkOverlay(overlay, originalBg = '#ddd') {
+    if (!overlay || !overlayStartRect) {
+      overlay && overlay.remove();
+      document.body.classList.remove('white-ui');
+      return;
+    }
+  
+    overlay.classList.remove('expanded');
+    overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
+    overlay.style.left = `${overlayStartRect.left + overlayStartRect.width / 2}px`;
+    overlay.style.width = `${overlayStartRect.width}px`;
+    overlay.style.height = `${overlayStartRect.height}px`;
+    overlay.style.borderRadius = '50%';
+  
+    const onShrinkEnd = (ev) => {
+      if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+        overlay.removeEventListener('transitionend', onShrinkEnd);
+        overlay.remove();
+        document.body.classList.remove('white-ui');
+  
+        const poemEl = overlay.querySelector('.fullscreen-poem');
+        if (poemEl) poemEl.remove();
+  
+        circle.style.background = originalBg || '#ddd';
+  
+        let mediaLayer = circle.querySelector('.media-layer');
+        if (!mediaLayer) {
+          mediaLayer = document.createElement('div');
+          mediaLayer.className = 'media-layer';
+          circle.appendChild(mediaLayer);
+        } else {
+          mediaLayer.innerHTML = '';
+        }
+  
+        if (expandedVideo || preExpandWasVideo) {
+          const v = document.createElement('video');
+          v.src = videoSrc;
+          v.autoplay = true;
+          v.loop = true;
+          v.muted = true;
+          v.style.width = '100%';
+          v.style.height = '100%';
+          v.style.objectFit = 'cover';
+          v.style.borderRadius = '50%';
+          mediaLayer.appendChild(v);
+          videoEl = v;
+        } else {
+          const img = document.createElement('img');
+          img.src = imageSrc;
+          img.alt = 'Circular Image';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          mediaLayer.appendChild(img);
+        }
+  
+        let title = circle.querySelector('.title');
+        if (!title) {
+          title = document.createElement('div');
+          title.className = 'title';
+          title.innerText = 'To Daffodils';
+          circle.appendChild(title);
+        }
+        title.style.opacity = 1;
+  
+        expandedVideo = null;
+        preExpandWasVideo = false;
+      }
+    };
+  
+    overlay.addEventListener('transitionend', onShrinkEnd);
+  }
+  
+  // --- MENU ---
+  const menuButton = document.querySelector('.menu-button');
+  const sideMenu = document.querySelector('.side-menu');
+  const menuOverlay = document.querySelector('.menu-overlay');
+  
+  menuButton.addEventListener('click', () => {
+    sideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('active');
+  });
+  
+  menuOverlay.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+  });
+  
+  const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
+  menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const submenu = item.nextElementSibling;
+      if (!submenu) return;
+      submenu.classList.toggle('open');
+    });
+  });
+  </script>
   
   
 </body>

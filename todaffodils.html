@@ -318,6 +318,18 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+/* Scatter animation styling */
+.scatter span {
+  display: inline-block;
+  transition: transform 4.2s ease, opacity 1.2s ease;
+}
+
+/* Apply scatter only when hovered */
+.scatter:hover span {
+  transform: translate(var(--x), var(--y)) rotate(var(--r));
+  opacity: var(--o);
+}
+
   </style>
 </head>
 <body>
@@ -547,10 +559,27 @@ Ne'er to be found again.`;
       }
   
       // --- ADD POEM ---
-      const poemDiv = document.createElement('div');
-      poemDiv.className = 'fullscreen-poem';
-      poemDiv.innerText = poemText;
-      overlay.appendChild(poemDiv);
+      // --- ADD POEM WITH SCATTER EFFECT ---
+const poemDiv = document.createElement('div');
+poemDiv.className = 'fullscreen-poem scatter';
+poemDiv.innerHTML = poemText
+  .split(/\s+/)
+  .map(word => `<span>${word}</span>`)
+  .join(' ');
+overlay.appendChild(poemDiv);
+
+// scatter words after overlay expands
+setTimeout(() => {
+  const spans = poemDiv.querySelectorAll('span');
+  spans.forEach(span => {
+    const x = (Math.random() - 0.5) * 180; // horizontal movement range
+    const y = (Math.random() - 0.5) * 120; // vertical movement range
+    const r = (Math.random() - 0.5) * 25;  // rotation in degrees
+    span.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
+    span.style.opacity = Math.random() * 0.9 + 0.1;
+  });
+}, 800);
+
   
       document.body.insertBefore(overlay, document.body.firstChild);
   
