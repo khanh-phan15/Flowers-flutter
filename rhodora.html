@@ -315,6 +315,27 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+.fullscreen-poem span {
+  opacity: 0;
+  display: inline-block;
+  animation: fadeInOut 4s infinite;
+  animation-delay: calc(var(--i) * 0.2s); /* stagger based on index */
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+
+/* stagger each word slightly */
+.fullscreen-poem span:nth-child(1) { animation-delay: 0s; }
+.fullscreen-poem span:nth-child(2) { animation-delay: 0.2s; }
+.fullscreen-poem span:nth-child(3) { animation-delay: 0.4s; }
+/* repeat for as many words as needed, or use nth-child(odd/even) for simplicity */
+
+
+
   </style>
 </head>
 <body>
@@ -380,26 +401,23 @@
 
 <script>
   const rightArrow = document.querySelector('.right-arrow');
-
-rightArrow.addEventListener('click', () => {
-  // Apply slide-out class to body
-  document.body.classList.add('slide-out-left');
-
-  // Wait for animation to finish before navigating
-  setTimeout(() => {
-    window.location.href = 'fadingpetals.html'; // replace with your target page
-  }, 500); // matches CSS transition duration
-});
-
-    // --- element refs ---
-    const playButton = document.querySelector('.play-button');
-    const pauseButton = document.querySelector('.pause-button');
-    const circle = document.querySelector('.circle-image');
-    const expandButton = document.querySelector('.center-button');
-    const imageSrc = 'images/Rhodora.jpg';
-    const videoSrc = 'images/Rhodora-video.mp4';
-    
-    const poemText = `In May, when sea-winds pierced our solitudes,
+  
+  rightArrow.addEventListener('click', () => {
+    document.body.classList.add('slide-out-left');
+    setTimeout(() => {
+      window.location.href = 'fadingpetals.html';
+    }, 500);
+  });
+  
+  // --- element refs ---
+  const playButton = document.querySelector('.play-button');
+  const pauseButton = document.querySelector('.pause-button');
+  const circle = document.querySelector('.circle-image');
+  const expandButton = document.querySelector('.center-button');
+  const imageSrc = 'images/Rhodora.jpg';
+  const videoSrc = 'images/Rhodora-video.mp4';
+  
+  const poemText = `In May, when sea-winds pierced our solitudes,
   I found the fresh Rhodora in the woods,
   Spreading its leafless blooms in a damp nook,
   To please the desert and the sluggish brook.
@@ -416,263 +434,259 @@ rightArrow.addEventListener('click', () => {
   But in my simple ignorance suppose
   The self-same power that brought me there, brought you.`;
   
-    let videoEl = null;
-    let expandedVideo = null;
-    let overlayStartRect = null;
-    let preExpandWasVideo = false;
+  let videoEl = null;
+  let expandedVideo = null;
+  let overlayStartRect = null;
+  let preExpandWasVideo = false;
   
-    // --- PLAY ---
-    playButton.addEventListener('click', () => {
-      const overlay = document.querySelector('.fullscreen-overlay');
-      if (overlay) {
-        const ovVideo = overlay.querySelector('video');
-        if (ovVideo) ovVideo.play();
-        return;
-      }
-  
-      const mediaLayer = circle.querySelector('.media-layer');
-      mediaLayer.innerHTML = '';
-      const vid = document.createElement('video');
-      vid.src = videoSrc;
-      vid.autoplay = true;
-      vid.loop = true;
-      vid.muted = true;
-      vid.style.width = '100%';
-      vid.style.height = '100%';
-      vid.style.objectFit = 'cover';
-      vid.style.borderRadius = '50%';
-      mediaLayer.appendChild(vid);
-      videoEl = vid;
-  
-      // Hide the title when playing video
-      const title = circle.querySelector('.title');
-      if (title) title.style.opacity = 0;
-    });
-  
-    // --- PAUSE ---
-    pauseButton.addEventListener('click', () => {
-      const overlay = document.querySelector('.fullscreen-overlay');
-      if (overlay) {
-        const ovVideo = overlay.querySelector('video');
-        if (ovVideo) ovVideo.pause();
-        return;
-      }
-  
-      if (videoEl) {
-        videoEl.pause();
-        videoEl.remove();
-        videoEl = null;
-      }
-  
-      const mediaLayer = circle.querySelector('.media-layer');
-      mediaLayer.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = imageSrc;
-      img.alt = 'Circular Image';
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      mediaLayer.appendChild(img);
-  
-      // Show the title when image is displayed
-      const title = circle.querySelector('.title');
-      if (title) title.style.opacity = 1;
-    });
-  
-    // --- EXPAND ---
-    expandButton.addEventListener('click', () => {
-      const existingOverlay = document.querySelector('.fullscreen-overlay');
-      if (existingOverlay) {
-        shrinkOverlay(existingOverlay);
-        return;
-      }
-  
-      const rect = circle.getBoundingClientRect();
-      overlayStartRect = rect;
-      preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
-  
-      const overlay = document.createElement('div');
-      overlay.className = 'fullscreen-overlay';
-      overlay.style.top = `${rect.top + rect.height / 2}px`;
-      overlay.style.left = `${rect.left + rect.width / 2}px`;
-      overlay.style.width = `${rect.width}px`;
-      overlay.style.height = `${rect.height}px`;
-      overlay.style.borderRadius = '50%';
-      overlay.style.transform = 'translate(-50%,-50%)';
-      overlay.style.position = 'fixed';
-      overlay.style.zIndex = '0';
-      overlay.style.display = 'flex';
-      overlay.style.justifyContent = 'center';
-      overlay.style.alignItems = 'center';
-      overlay.style.overflow = 'hidden';
-      overlay.style.background = 'transparent';
-      overlay.style.transition = 'all .6s ease-in-out';
-  
-      // --- Add media (image/video) ---
-      if (circle.querySelector('video') || videoEl) {
-        const v = document.createElement('video');
-        v.src = videoSrc;
-        v.autoplay = true;
-        v.loop = true;
-        v.muted = true;
-        v.style.position = 'absolute';
-        v.style.top = '0';
-        v.style.left = '0';
-        v.style.width = '100%';
-        v.style.height = '100%';
-        v.style.objectFit = 'cover';
-        v.style.borderRadius = '0';
-        overlay.appendChild(v);
-        expandedVideo = v;
-      } else {
-        const i = document.createElement('img');
-        i.src = imageSrc;
-        i.style.position = 'absolute';
-        i.style.top = '0';
-        i.style.left = '0';
-        i.style.width = '100%';
-        i.style.height = '100%';
-        i.style.objectFit = 'cover';
-        i.style.borderRadius = '0';
-        overlay.appendChild(i);
-        expandedVideo = null;
-      }
-  
-      // --- ADD POEM ---
-      const poemDiv = document.createElement('div');
-      poemDiv.className = 'fullscreen-poem';
-      poemDiv.innerText = poemText;
-      overlay.appendChild(poemDiv);
-  
-      document.body.insertBefore(overlay, document.body.firstChild);
-  
-      const originalBg = circle.style.background;
-      circle.style.background = 'transparent';
-      circle.innerHTML = '';
-  
-      requestAnimationFrame(() => {
-        overlay.classList.add('expanded');
-        overlay.style.top = '50%';
-        overlay.style.left = '50%';
-        overlay.style.width = '100vw';
-        overlay.style.height = '100vh';
-        overlay.style.borderRadius = '0';
-      });
-  
-      const onExpandEnd = (ev) => {
-        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
-          document.body.classList.add('white-ui');
-          overlay.removeEventListener('transitionend', onExpandEnd);
-        }
-      };
-      overlay.addEventListener('transitionend', onExpandEnd);
-  
-      overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
-    });
-  
-    // --- SHRINK ---
-    function shrinkOverlay(overlay, originalBg = '#ddd') {
-      if (!overlay || !overlayStartRect) {
-        overlay && overlay.remove();
-        document.body.classList.remove('white-ui');
-        return;
-      }
-  
-      overlay.classList.remove('expanded');
-      overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
-      overlay.style.left = `${overlayStartRect.left + overlayStartRect.width / 2}px`;
-      overlay.style.width = `${overlayStartRect.width}px`;
-      overlay.style.height = `${overlayStartRect.height}px`;
-      overlay.style.borderRadius = '50%';
-  
-      const onShrinkEnd = (ev) => {
-        if (ev.propertyName === 'width' || ev.propertyName === 'height') {
-          overlay.removeEventListener('transitionend', onShrinkEnd);
-          overlay.remove();
-          document.body.classList.remove('white-ui');
-  
-          // --- REMOVE POEM ---
-          const poemEl = overlay.querySelector('.fullscreen-poem');
-          if (poemEl) poemEl.remove();
-  
-          // Restore circle background
-          circle.style.background = originalBg || '#ddd';
-  
-          // Re-add media layer
-          let mediaLayer = circle.querySelector('.media-layer');
-          if (!mediaLayer) {
-            mediaLayer = document.createElement('div');
-            mediaLayer.className = 'media-layer';
-            circle.appendChild(mediaLayer);
-          } else {
-            mediaLayer.innerHTML = '';
-          }
-  
-          if (expandedVideo || preExpandWasVideo) {
-            const v = document.createElement('video');
-            v.src = videoSrc;
-            v.autoplay = true;
-            v.loop = true;
-            v.muted = true;
-            v.style.width = '100%';
-            v.style.height = '100%';
-            v.style.objectFit = 'cover';
-            v.style.borderRadius = '50%';
-            mediaLayer.appendChild(v);
-            videoEl = v;
-          } else {
-            const img = document.createElement('img');
-            img.src = imageSrc;
-            img.alt = 'Circular Image';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            mediaLayer.appendChild(img);
-          }
-  
-          // Restore title
-          let title = circle.querySelector('.title');
-          if (!title) {
-            title = document.createElement('div');
-            title.className = 'title';
-            title.innerText = 'The Rhodora';
-            circle.appendChild(title);
-          }
-          title.style.opacity = 1;
-  
-          expandedVideo = null;
-          preExpandWasVideo = false;
-        }
-      };
-  
-      overlay.addEventListener('transitionend', onShrinkEnd);
+  // --- PLAY ---
+  playButton.addEventListener('click', () => {
+    const overlay = document.querySelector('.fullscreen-overlay');
+    if (overlay) {
+      const ovVideo = overlay.querySelector('video');
+      if (ovVideo) ovVideo.play();
+      return;
     }
-
-    const menuButton = document.querySelector('.menu-button');
-const sideMenu = document.querySelector('.side-menu');
-const menuOverlay = document.querySelector('.menu-overlay');
-
-menuButton.addEventListener('click', () => {
-  sideMenu.classList.toggle('open');
-  menuOverlay.classList.toggle('active');
-});
-
-// close menu when clicking outside
-menuOverlay.addEventListener('click', () => {
-  sideMenu.classList.remove('open');
-  menuOverlay.classList.remove('active');
-});
-const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
-
-menuItems.forEach(item => {
-  item.addEventListener('click', (e) => {
-    const submenu = item.nextElementSibling;
-    if (!submenu) return;
-    submenu.classList.toggle('open');
+  
+    const mediaLayer = circle.querySelector('.media-layer');
+    mediaLayer.innerHTML = '';
+    const vid = document.createElement('video');
+    vid.src = videoSrc;
+    vid.autoplay = true;
+    vid.loop = true;
+    vid.muted = true;
+    vid.style.width = '100%';
+    vid.style.height = '100%';
+    vid.style.objectFit = 'cover';
+    vid.style.borderRadius = '50%';
+    mediaLayer.appendChild(vid);
+    videoEl = vid;
+  
+    const title = circle.querySelector('.title');
+    if (title) title.style.opacity = 0;
   });
-});
-
-
+  
+  // --- PAUSE ---
+  pauseButton.addEventListener('click', () => {
+    const overlay = document.querySelector('.fullscreen-overlay');
+    if (overlay) {
+      const ovVideo = overlay.querySelector('video');
+      if (ovVideo) ovVideo.pause();
+      return;
+    }
+  
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.remove();
+      videoEl = null;
+    }
+  
+    const mediaLayer = circle.querySelector('.media-layer');
+    mediaLayer.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    img.alt = 'Circular Image';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    mediaLayer.appendChild(img);
+  
+    const title = circle.querySelector('.title');
+    if (title) title.style.opacity = 1;
+  });
+  
+  // --- EXPAND ---
+  expandButton.addEventListener('click', () => {
+    const existingOverlay = document.querySelector('.fullscreen-overlay');
+    if (existingOverlay) {
+      shrinkOverlay(existingOverlay);
+      return;
+    }
+  
+    const rect = circle.getBoundingClientRect();
+    overlayStartRect = rect;
+    preExpandWasVideo = !!circle.querySelector('video') || !!videoEl;
+  
+    const overlay = document.createElement('div');
+    overlay.className = 'fullscreen-overlay';
+    overlay.style.top = `${rect.top + rect.height / 2}px`;
+    overlay.style.left = `${rect.left + rect.width / 2}px`;
+    overlay.style.width = `${rect.width}px`;
+    overlay.style.height = `${rect.height}px`;
+    overlay.style.borderRadius = '50%';
+    overlay.style.transform = 'translate(-50%,-50%)';
+    overlay.style.position = 'fixed';
+    overlay.style.zIndex = '0';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.overflow = 'hidden';
+    overlay.style.background = 'transparent';
+    overlay.style.transition = 'all .6s ease-in-out';
+  
+    // --- Add media (image/video) ---
+    if (circle.querySelector('video') || videoEl) {
+      const v = document.createElement('video');
+      v.src = videoSrc;
+      v.autoplay = true;
+      v.loop = true;
+      v.muted = true;
+      v.style.position = 'absolute';
+      v.style.top = '0';
+      v.style.left = '0';
+      v.style.width = '100%';
+      v.style.height = '100%';
+      v.style.objectFit = 'cover';
+      v.style.borderRadius = '0';
+      overlay.appendChild(v);
+      expandedVideo = v;
+    } else {
+      const i = document.createElement('img');
+      i.src = imageSrc;
+      i.style.position = 'absolute';
+      i.style.top = '0';
+      i.style.left = '0';
+      i.style.width = '100%';
+      i.style.height = '100%';
+      i.style.objectFit = 'cover';
+      i.style.borderRadius = '0';
+      overlay.appendChild(i);
+      expandedVideo = null;
+    }
+  
+    // --- ADD POEM WITH STAGGERED FADE ---
+    const poemDiv = document.createElement('div');
+    poemDiv.className = 'fullscreen-poem';
+    poemDiv.innerHTML = poemText
+      .split(/\s+/)
+      .map((word, i) => `<span style="--i:${i}">${word}</span>`)
+      .join(' ');
+    overlay.appendChild(poemDiv);
+  
+    document.body.insertBefore(overlay, document.body.firstChild);
+  
+    const originalBg = circle.style.background;
+    circle.style.background = 'transparent';
+    circle.innerHTML = '';
+  
+    requestAnimationFrame(() => {
+      overlay.classList.add('expanded');
+      overlay.style.top = '50%';
+      overlay.style.left = '50%';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.borderRadius = '0';
+    });
+  
+    const onExpandEnd = (ev) => {
+      if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+        document.body.classList.add('white-ui');
+        overlay.removeEventListener('transitionend', onExpandEnd);
+      }
+    };
+    overlay.addEventListener('transitionend', onExpandEnd);
+  
+    overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
+  });
+  
+  // --- SHRINK ---
+  function shrinkOverlay(overlay, originalBg = '#ddd') {
+    if (!overlay || !overlayStartRect) {
+      overlay && overlay.remove();
+      document.body.classList.remove('white-ui');
+      return;
+    }
+  
+    overlay.classList.remove('expanded');
+    overlay.style.top = `${overlayStartRect.top + overlayStartRect.height / 2}px`;
+    overlay.style.left = `${overlayStartRect.left + overlayStartRect.width / 2}px`;
+    overlay.style.width = `${overlayStartRect.width}px`;
+    overlay.style.height = `${overlayStartRect.height}px`;
+    overlay.style.borderRadius = '50%';
+  
+    const onShrinkEnd = (ev) => {
+      if (ev.propertyName === 'width' || ev.propertyName === 'height') {
+        overlay.removeEventListener('transitionend', onShrinkEnd);
+        overlay.remove();
+        document.body.classList.remove('white-ui');
+  
+        const poemEl = overlay.querySelector('.fullscreen-poem');
+        if (poemEl) poemEl.remove();
+  
+        circle.style.background = originalBg || '#ddd';
+  
+        let mediaLayer = circle.querySelector('.media-layer');
+        if (!mediaLayer) {
+          mediaLayer = document.createElement('div');
+          mediaLayer.className = 'media-layer';
+          circle.appendChild(mediaLayer);
+        } else {
+          mediaLayer.innerHTML = '';
+        }
+  
+        if (expandedVideo || preExpandWasVideo) {
+          const v = document.createElement('video');
+          v.src = videoSrc;
+          v.autoplay = true;
+          v.loop = true;
+          v.muted = true;
+          v.style.width = '100%';
+          v.style.height = '100%';
+          v.style.objectFit = 'cover';
+          v.style.borderRadius = '50%';
+          mediaLayer.appendChild(v);
+          videoEl = v;
+        } else {
+          const img = document.createElement('img');
+          img.src = imageSrc;
+          img.alt = 'Circular Image';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          mediaLayer.appendChild(img);
+        }
+  
+        let title = circle.querySelector('.title');
+        if (!title) {
+          title = document.createElement('div');
+          title.className = 'title';
+          title.innerText = 'The Rhodora';
+          circle.appendChild(title);
+        }
+        title.style.opacity = 1;
+  
+        expandedVideo = null;
+        preExpandWasVideo = false;
+      }
+    };
+  
+    overlay.addEventListener('transitionend', onShrinkEnd);
+  }
+  
+  // --- MENU ---
+  const menuButton = document.querySelector('.menu-button');
+  const sideMenu = document.querySelector('.side-menu');
+  const menuOverlay = document.querySelector('.menu-overlay');
+  
+  menuButton.addEventListener('click', () => {
+    sideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('active');
+  });
+  
+  menuOverlay.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+  });
+  
+  const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
+  
+  menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const submenu = item.nextElementSibling;
+      if (!submenu) return;
+      submenu.classList.toggle('open');
+    });
+  });
   </script>
   
   

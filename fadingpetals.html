@@ -331,7 +331,16 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
 
+  .fullscreen-poem span {
+    opacity: 0;
+    display: inline-block;
+    animation: fadeInOut 3s infinite;
+  }
   </style>
 </head>
 <body>

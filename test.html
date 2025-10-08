@@ -241,9 +241,6 @@
   max-width: 80%;
   z-index: 5;
   pointer-events: none;
-  column-count: 2;
-  column-gap: 3rem;
-  line-height: 1.6;
 }
 .slide-out-left {
   transform: translateX(-100%);
@@ -318,17 +315,26 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
-/* Scatter animation styling */
-.scatter span {
+.fullscreen-poem span {
+  opacity: 0;
   display: inline-block;
-  transition: transform 1.2s ease, opacity 1.2s ease;
+  animation: fadeInOut 4s infinite;
+  animation-delay: calc(var(--i) * 0.2s); /* stagger based on index */
 }
 
-/* Apply scatter only when hovered */
-.scatter:hover span {
-  transform: translate(var(--x), var(--y)) rotate(var(--r));
-  opacity: var(--o);
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
 }
+
+
+/* stagger each word slightly */
+.fullscreen-poem span:nth-child(1) { animation-delay: 0s; }
+.fullscreen-poem span:nth-child(2) { animation-delay: 0.2s; }
+.fullscreen-poem span:nth-child(3) { animation-delay: 0.4s; }
+/* repeat for as many words as needed, or use nth-child(odd/even) for simplicity */
+
+
 
   </style>
 </head>
@@ -346,7 +352,7 @@
     <div class="menu-item">
       <a href="#">CHAPTER 1</a>
       <div class="submenu">
-        <a href="rhodora.html">To Daffodils</a>
+        <a href="rhodora.html">The Rhodora</a>
         <a href="fadingpetals.html">Fading Petals</a>
       </div>
     </div>
@@ -372,12 +378,12 @@
 
   <!-- Middle: intro, circle, controls -->
   <div class="middle">
-    <div class="intro">CHAPTER 2: THE FRAGILITY OF INNOCENCE</div>
+    <div class="intro">CHAPTER 1: WHEN BEAUTY MOVES</div>
     <div class="circle-image show-title">
       <div class="media-layer">
-        <img src="images/daffodils.jpg" alt="Circular Image">
+        <img src="images/Rhodora.jpg" alt="Circular Image">
       </div>
-      <div class="title">To Daffodils</div>
+      <div class="title">The Rhodora</div>
 
     </div>
     <div class="left-arrow"><</div>
@@ -392,6 +398,7 @@
     </div>
   </div>
 </div>
+
 <script>
   const rightArrow = document.querySelector('.right-arrow');
   
@@ -407,30 +414,98 @@
   const pauseButton = document.querySelector('.pause-button');
   const circle = document.querySelector('.circle-image');
   const expandButton = document.querySelector('.center-button');
-  const imageSrc = 'images/daffodils.jpg';
-  const videoSrc = 'images/daffodils-video.mp4';
+  const imageSrc = 'images/Rhodora.jpg';
+  const videoSrc = 'images/Rhodora-video.mp4';
   
-  const poemText = `Fair Daffodils, we weep to see
-  You haste away so soon;
-  As yet the early-rising sun
-  Has not attain'd his noon.
-  Stay, stay,
-  Until the hasting day
-  Has run
-  But to the even-song;
-  And, having pray'd together, we
-  Will go with you along.
-  
-  We have short time to stay, as you,
-  We have as short a spring;
-  As quick a growth to meet decay,
-  As you, or anything.
-  We die
-  As your hours do, and dry
-  Away,
-  Like to the summer's rain;
-  Or as the pearls of morning's dew,
-  Ne'er to be found again.`;
+  const poemText = `In gardens kissed by sunlight’s gentle grace,
+Where flowers bloom in nature’s sweet embrace,
+A poignant tale of beauty takes its flight,
+As fading petals tell of life’s twilight.
+
+Each petal, like a moment, shines so bright,
+A fragile gem in morning’s golden light,
+Yet in their vibrant hues, a truth they bear,
+That beauty’s glory is not meant to wear.
+
+Oh, fading petals, whispers of the breeze,
+You dance upon the limbs of ancient trees,
+With every petal’s fall, a story told,
+Of time’s embrace, as youth grows dim and old.
+
+The rose, once vivid red, now bows its head,
+Its petals like the tears of angels shed,
+A mirror of our lives, so brief and bright,
+Yet in their passing, fills the heart with light.
+
+The tulip, once a vibrant burst of spring,
+Now droops its head, a melancholy thing,
+Yet in its fading, speaks of cycles true,
+As life gives way to life, in seasons through.
+
+Like fallen stars that grace the earthly ground,
+These petals paint a picture all around,
+Of beauty’s dance, a waltz so bittersweet,
+As youth and time in tender moments meet.
+
+The lily, like a bridal gown so fair,
+Unfurls its petals in the morning air,
+But with each passing day, they gently wane,
+A metaphor for life’s transient reign.
+
+The daisy, with its petals white and gold,
+Speaks of innocence and stories yet untold,
+Its petals close as daylight fades to night,
+A gentle nod to the fleetingness of light.
+
+Yet in this fading, there’s a truth to find,
+That beauty’s essence lives within the mind,
+For though the petals wither, frail and thin,
+The soul’s sweet bloom forever lies within.
+
+So let us not despair in fading’s call,
+For life’s true beauty lies beyond the fall,
+In memories and moments that we share,
+A legacy of love beyond compare.
+
+“Fading Petals,” whispers nature’s tale,
+Of beauty fleeting, yet in memories, prevail,
+Embrace the transient, let your heart be free,
+For even fading petals hold a legacy.
+
+In every petal’s curve and delicate line,
+A story of existence, both yours and mine,
+For as the petals fade and gently fall,
+They leave behind a memory, a story to recall.
+
+And as the seasons shift, the flowers bloom anew,
+Each petal’s life is brief, yet its beauty shines through,
+So let us learn from petals, wisps of life’s design,
+To treasure every moment, and let our spirits shine.
+
+In gardens of our lives, where time’s gentle breeze,
+Whispers of fading petals among the trees,
+We find a truth profound, a lesson to keep,
+That even in fading, our beauty runs deep.
+
+For just as petals wither, they leave behind a trace,
+A memory of their presence, a moment’s gentle grace,
+So too shall we, in life’s grand symphony,
+Leave behind a legacy, a touch of eternity.
+
+“Fading Petals” teach us to embrace the now,
+To hold our moments gently, to cherish every vow,
+For like the petals falling in graceful surrender,
+Life’s beauty lies in both its bloom and its tender.
+
+So let our hearts be open, like petals to the sky,
+As we dance through the seasons, as the years go by,
+And when our own petals fall, let them paint the air,
+With the colors of our love, a beauty beyond compare.
+
+In every bloom and withering, in petals’ rise and fall,
+We find the rhythm of life, a story told to all,
+“Fading Petals,” a reminder of life’s transient art,
+A reflection of our journey, etched on nature’s heart.`;
   
   let videoEl = null;
   let expandedVideo = null;
@@ -552,23 +627,18 @@
       expandedVideo = null;
     }
   
-    // --- ADD POEM WITH HOVER-DEPENDENT SCATTER ---
+    // --- ADD POEM WITH STAGGERED FADE ---
     const poemDiv = document.createElement('div');
-    poemDiv.className = 'fullscreen-poem scatter';
+    poemDiv.className = 'fullscreen-poem';
     poemDiv.innerHTML = poemText
       .split(/\s+/)
-      .map(word => {
-        const x = (Math.random() - 0.5) * 180 + 'px';
-        const y = (Math.random() - 0.5) * 120 + 'px';
-        const r = (Math.random() - 0.5) * 25 + 'deg';
-        const o = Math.random() * 0.9 + 0.1;
-        return `<span style="--x:${x};--y:${y};--r:${r};--o:${o}">${word}</span>`;
-      })
+      .map((word, i) => `<span style="--i:${i}">${word}</span>`)
       .join(' ');
     overlay.appendChild(poemDiv);
   
     document.body.insertBefore(overlay, document.body.firstChild);
   
+    const originalBg = circle.style.background;
     circle.style.background = 'transparent';
     circle.innerHTML = '';
   
@@ -581,13 +651,15 @@
       overlay.style.borderRadius = '0';
     });
   
-    overlay.addEventListener('transitionend', (ev) => {
+    const onExpandEnd = (ev) => {
       if (ev.propertyName === 'width' || ev.propertyName === 'height') {
         document.body.classList.add('white-ui');
+        overlay.removeEventListener('transitionend', onExpandEnd);
       }
-    });
+    };
+    overlay.addEventListener('transitionend', onExpandEnd);
   
-    overlay.addEventListener('click', () => shrinkOverlay(overlay));
+    overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
   });
   
   // --- SHRINK ---
@@ -651,7 +723,7 @@
         if (!title) {
           title = document.createElement('div');
           title.className = 'title';
-          title.innerText = 'To Daffodils';
+          title.innerText = 'The Rhodora';
           circle.appendChild(title);
         }
         title.style.opacity = 1;
@@ -680,6 +752,7 @@
   });
   
   const menuItems = document.querySelectorAll('.side-menu .menu-item > a');
+  
   menuItems.forEach(item => {
     item.addEventListener('click', (e) => {
       const submenu = item.nextElementSibling;
@@ -688,6 +761,7 @@
     });
   });
   </script>
+  
   
   
 </body>
