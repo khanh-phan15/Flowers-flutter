@@ -450,6 +450,16 @@
       window.location.href = 'fadingpetals.html';
     }, 500);
   });
+  const leftArrow = document.querySelector('.left-arrow');
+
+leftArrow.addEventListener('click', () => {
+  // Optionally, add a different slide animation for left navigation
+  document.body.classList.add('slide-out-left'); // or create 'slide-out-right' if you want opposite direction
+
+  setTimeout(() => {
+    window.location.href = 'woman.html'; // replace with your target page
+  }, 500); // matches CSS transition duration
+});
   
   // --- element refs ---
   const playButton = document.querySelector('.play-button');

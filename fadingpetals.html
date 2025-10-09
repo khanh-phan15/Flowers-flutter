@@ -416,8 +416,8 @@
       <div class="title">Fading Petals</div>
 
     </div>
-    <div class="left-arrow"><</div>
-    <div class="right-arrow" data-target="fadingpetals.html">></div>
+    <div class="left-arrow" data-target="rhodora.html"><</div>
+    <div class="right-arrow" data-target="todaffodils.html">></div>
 
     <div class="control-bar">
       <div class="pause-button">⏸</div>
@@ -435,10 +435,19 @@
   rightArrow.addEventListener('click', () => {
     document.body.classList.add('slide-out-left');
     setTimeout(() => {
-      window.location.href = 'fadingpetals.html';
+      window.location.href = 'todaffodils.html';
     }, 500);
   });
-  
+  const leftArrow = document.querySelector('.left-arrow');
+
+leftArrow.addEventListener('click', () => {
+  // Optionally, add a different slide animation for left navigation
+  document.body.classList.add('slide-out-left'); // or create 'slide-out-right' if you want opposite direction
+
+  setTimeout(() => {
+    window.location.href = 'rhodora.html'; // replace with your target page
+  }, 500); // matches CSS transition duration
+});
   // --- element refs ---
   const playButton = document.querySelector('.play-button');
   const pauseButton = document.querySelector('.pause-button');

@@ -245,11 +245,41 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.preload-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  animation: rotateOnly 1.5s forwards;
+}
+
+/* Initial rotate animation */
+@keyframes rotateOnly {
+  0%   { transform: rotate(0deg); opacity:1; }
+  80%  { transform: rotate(360deg); opacity:1; }
+  100% { transform: rotate(360deg); opacity:1;}
+}
 
 
   </style>
 </head>
 <body>
+  <!-- Add this inside <body> as the first element -->
+<div id="preloader">
+  <img src="images/expand-button.png" alt="Loading" class="preload-image">
+</div>
   <div class="container">
     <!-- Left -->
     <div class="side-group left-group">
@@ -581,6 +611,42 @@ menuItems.forEach(item => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const preloader = document.getElementById("preloader");
+  const preloadImg = document.querySelector('.preload-image');
+  const finalButton = document.querySelector('.center-button img');
+
+  // Get final position and size
+  const finalRect = finalButton.getBoundingClientRect();
+  const startRect = preloadImg.getBoundingClientRect();
+
+  // Calculate translation
+  const translateX = finalRect.left + finalRect.width/2 - (startRect.left + startRect.width/2);
+  const translateY = finalRect.top + finalRect.height/2 - (startRect.top + startRect.height/2);
+
+  // Calculate scale
+  const scaleX = finalRect.width / startRect.width;
+  const scaleY = finalRect.height / startRect.height;
+  const scale = Math.min(scaleX, scaleY);
+
+  // Apply animation dynamically
+  preloadImg.style.animation = `rotateThenMove 2.5s forwards`;
+
+  // Inject keyframes dynamically
+  const style = document.createElement('style');
+  style.innerHTML = `
+  @keyframes rotateThenMove {
+    0%   { transform: rotate(0deg) translate(0,0) scale(1); opacity:1; }
+    70%  { transform: rotate(360deg) translate(0,0) scale(1); opacity:1; }
+    100% { transform: rotate(360deg) translate(${translateX}px, ${translateY}px) scale(${scale}); opacity:1; }
+  }`;
+  document.head.appendChild(style);
+
+  // Remove preloader after animation
+  preloadImg.addEventListener('animationend', () => {
+    preloader.remove();
+  });
+});
 
   </script>
   
