@@ -178,30 +178,57 @@
 
     /* Fullscreen overlay */
     .fullscreen-overlay {
-      position: fixed;
-      z-index: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      background: transparent;
-      transition: all .6s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  transition: all .6s ease-in-out;
+  z-index: 10001; /* slightly above middle */
     }
+/* make sure poem is above video/image */
+.fullscreen-poem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'BodyFont', sans-serif;
+  font-size: 1.2rem;
+  text-align: left;
+  white-space: pre-line;
+  max-width: 50%;
+  pointer-events: auto !important;
+}
+
+/* make spans inside draggable */
+.fullscreen-poem span {
+  cursor: grab;
+}
+
+
     .fullscreen-overlay video, .fullscreen-overlay img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      pointer-events: none !important;
     }
     .fullscreen-overlay.expanded {
-      top: 50% !important;
-      left: 50% !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      border-radius: 0 !important;
-      transform: translate(-50%, -50%) !important;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 100vh ;
+      border-radius: 0 ;
+      transform: translate(-50%, -50%) ;
+      pointer-events: auto; 
     }
-
+    .fullscreen-overlay.expanded .fullscreen-poem,
+.fullscreen-overlay.expanded .fullscreen-poem span {
+  pointer-events: auto;
+}
     /* WHITE UI state */
     .white-ui .right-arrow,
     .white-ui .left-arrow,
@@ -224,13 +251,13 @@
   color: #314C1C;
   cursor: pointer;
   user-select: none;
-  z-index: 3;
+  z-index: 10000000;
 }
 
 .left-arrow { left: -460px; }   /* adjust distance from circle */
 .right-arrow { right: -460px; } /* adjust distance from circle */
 
-    .fullscreen-poem {
+.fullscreen-poem {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -239,11 +266,13 @@
   font-family: 'BodyFont', sans-serif;
   font-size: 1.2rem;
   text-align: left;
-  white-space: pre-line; /* keep line breaks */
+  white-space: pre-line;
   max-width: 50%;
-  z-index: 5;
-  pointer-events: none;
+  z-index: 10; 
+  pointer-events: auto; 
+  
 }
+
 .slide-out-left {
   transform: translateX(-100%);
 }
@@ -290,7 +319,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease;
-  z-index: 900;
+  z-index: 3000;
 }
 
 .menu-overlay.active {
@@ -317,6 +346,22 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+.side-menu,
+.menu-button,
+.home-button,
+.title,
+.control-bar {
+  z-index: 10000; /* stays above overlay */
+}
+.middle {
+  z-index: 1;
+}
+.fullscreen-poem{
+  z-index: 2;
+
+}
+
+
   </style>
 </head>
 <body>
@@ -410,20 +455,12 @@ leftArrow.addEventListener('click', () => {
     const imageSrc = 'images/garden.jpg';
     const videoSrc = 'images/garden-video.mp4';
     
-    const poemText = `I went to the Garden of Love,
-And saw what I never had seen:
-A Chapel was built in the midst,
-Where I used to play on the green.
-
-And the gates of this Chapel were shut,
-And 'Thou shalt not' writ over the door;
-So I turn'd to the Garden of Love,
-That so many sweet flowers bore. 
-
-And I saw it was filled with graves,
-And tomb-stones where flowers should be:
-And Priests in black gowns, were walking their rounds,
-And binding with briars, my joys & desires.`;
+    const poemText = `beauty mirror mask shadow gaze skin flowers flutter illusion 
+frame twist mold sculpt paint distort hide reveal bend polish break 
+fragile flawless artificial polished hidden distorted perfect soft cold 
+slowly subtly quietly barely gently deceptively behind 
+in on under behind with and or but 
+I you she he it they my your their this that the`;
   
     let videoEl = null;
     let expandedVideo = null;
@@ -502,6 +539,7 @@ And binding with briars, my joys & desires.`;
   
       const overlay = document.createElement('div');
       overlay.className = 'fullscreen-overlay';
+      overlay.style.pointerEvents = 'auto';
       overlay.style.top = `${rect.top + rect.height / 2}px`;
       overlay.style.left = `${rect.left + rect.width / 2}px`;
       overlay.style.width = `${rect.width}px`;
@@ -509,7 +547,7 @@ And binding with briars, my joys & desires.`;
       overlay.style.borderRadius = '50%';
       overlay.style.transform = 'translate(-50%,-50%)';
       overlay.style.position = 'fixed';
-      overlay.style.zIndex = '0';
+      overlay.style.zIndex = '1';
       overlay.style.display = 'flex';
       overlay.style.justifyContent = 'center';
       overlay.style.alignItems = 'center';
@@ -531,6 +569,7 @@ And binding with briars, my joys & desires.`;
         v.style.height = '100%';
         v.style.objectFit = 'cover';
         v.style.borderRadius = '0';
+        v.style.zIndex = '1';  // for video
         overlay.appendChild(v);
         expandedVideo = v;
       } else {
@@ -543,6 +582,7 @@ And binding with briars, my joys & desires.`;
         i.style.height = '100%';
         i.style.objectFit = 'cover';
         i.style.borderRadius = '0';
+        i.style.zIndex = '1';  // for image
         overlay.appendChild(i);
         expandedVideo = null;
       }
@@ -552,6 +592,8 @@ And binding with briars, my joys & desires.`;
       poemDiv.className = 'fullscreen-poem';
       poemDiv.innerText = poemText;
       overlay.appendChild(poemDiv);
+      makePoemDraggable(poemDiv);
+
   
       document.body.insertBefore(overlay, document.body.firstChild);
   
@@ -576,7 +618,9 @@ And binding with briars, my joys & desires.`;
       };
       overlay.addEventListener('transitionend', onExpandEnd);
   
-      overlay.addEventListener('click', () => shrinkOverlay(overlay, originalBg));
+// prevent overlay shrink when interacting with poem
+poemDiv.addEventListener('mousedown', e => e.stopPropagation());
+poemDiv.addEventListener('click', e => e.stopPropagation());
     });
   
     // --- SHRINK ---
@@ -644,7 +688,7 @@ And binding with briars, my joys & desires.`;
           if (!title) {
             title = document.createElement('div');
             title.className = 'title';
-            title.innerText = 'To Daffodils';
+            title.innerText = 'The Garden of Love';
             circle.appendChild(title);
           }
           title.style.opacity = 1;
@@ -657,7 +701,7 @@ And binding with briars, my joys & desires.`;
       overlay.addEventListener('transitionend', onShrinkEnd);
     }
 
-    const menuButton = document.querySelector('.menu-button');
+const menuButton = document.querySelector('.menu-button');
 const sideMenu = document.querySelector('.side-menu');
 const menuOverlay = document.querySelector('.menu-overlay');
 
@@ -681,6 +725,88 @@ menuItems.forEach(item => {
   });
 });
 
+
+
+function makePoemDraggable(poemDiv) {
+  const lines = poemDiv.innerText.split('\n'); 
+  poemDiv.innerHTML = '';
+  poemDiv.style.position = 'relative';
+  poemDiv.style.pointerEvents = 'auto';
+  poemDiv.style.maxWidth = '350px'; 
+  poemDiv.style.left = '50%';
+  poemDiv.style.top = '10%';
+  poemDiv.style.transform = 'translate(-90%, -750%)';
+  poemDiv.style.margin = '0 auto';
+
+  const lineHeight = 32; 
+  const parentHeight = poemDiv.parentElement.clientHeight;
+  const verticalOffset = 50; 
+  let currentY = (parentHeight / 2) - (lines.length / 2) * lineHeight - verticalOffset;
+
+  lines.forEach(line => {
+    const words = line.split(/\s+/);
+    const lineContainer = document.createElement('div');
+    lineContainer.style.textAlign = 'left';
+    lineContainer.style.position = 'relative';
+    lineContainer.style.height = `${lineHeight}px`;
+    poemDiv.appendChild(lineContainer);
+
+    words.forEach(word => {
+      const span = document.createElement('span');
+      span.textContent = word;
+      span.style.position = 'relative';
+      span.style.cursor = 'grab';
+      span.style.userSelect = 'none';
+      span.style.display = 'inline-block';
+      span.style.marginRight = '10px'; 
+      
+      // --- Rectangle styling ---
+      span.style.border = '1px solid white';   // white border
+      span.style.padding = '2px 6px';          // some space inside the rectangle
+      span.style.borderRadius = '4px';         // optional rounded corners
+      span.style.backgroundColor = 'rgba(0,0,0,0.2)'; // optional semi-transparent background
+
+      const offsetY = (Math.random() - 0.5) * 6;
+      span.style.top = `${offsetY}px`;
+
+      let isDragging = false;
+      let dragOffsetX, dragOffsetY;
+
+      span.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        isDragging = true;
+
+        const rect = span.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        span.style.cursor = 'grabbing';
+
+        const onMouseMove = e => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const parentRect = lineContainer.getBoundingClientRect();
+          span.style.position = 'absolute';
+          span.style.left = `${e.clientX - parentRect.left - dragOffsetX}px`;
+          span.style.top = `${e.clientY - parentRect.top - dragOffsetY}px`;
+        };
+
+        const onMouseUp = () => {
+          isDragging = false;
+          span.style.cursor = 'grab';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        };
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+
+      lineContainer.appendChild(span);
+    });
+
+    currentY += lineHeight;
+  });
+}
 
   </script>
   
