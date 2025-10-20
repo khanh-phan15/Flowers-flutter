@@ -386,14 +386,14 @@
       <a href="#">CHAPTER 2</a>
       <div class="submenu">
         <a href="todaffodils.html">To Daffodils</a>
-  
+        <a href="woman.html">Every Woman Lives Like a Flower</a>
+
       </div>
     </div>
     <div class="menu-item">
       <a href="#">CHAPTER 3</a>
       <div class="submenu">
-        <a href="garden.html">The Garden of Love</a>
-        <a href="woman.html">Every Woman Lives Like a Flower</a>
+        <a href="yourpoem.html">Your Poem</a>
       </div>
     </div>
   </div>
@@ -409,11 +409,11 @@
       <div class="media-layer">
         <img src="images/garden.jpg" alt="Circular Image">
       </div>
-      <div class="title">The Garden of Love</div>
+      <div class="title">Your Poem</div>
 
     </div>
-    <div class="left-arrow" data-target="todaffodils.html"><</div>
-    <div class="right-arrow" data-target="woman.html">></div>
+    <div class="left-arrow" data-target="woman.html"><</div>
+    <div class="right-arrow" data-target="rhodora.html">></div>
 
     <div class="control-bar">
       <div class="pause-button">⏸</div>
@@ -434,7 +434,7 @@ rightArrow.addEventListener('click', () => {
 
   // Wait for animation to finish before navigating
   setTimeout(() => {
-    window.location.href = 'woman.html'; // replace with your target page
+    window.location.href = 'rhodora.html'; // replace with your target page
   }, 500); // matches CSS transition duration
 });
 const leftArrow = document.querySelector('.left-arrow');
@@ -444,7 +444,7 @@ leftArrow.addEventListener('click', () => {
   document.body.classList.add('slide-out-left'); // or create 'slide-out-right' if you want opposite direction
 
   setTimeout(() => {
-    window.location.href = 'todaffodils.html'; // replace with your target page
+    window.location.href = 'woman.html'; // replace with your target page
   }, 500); // matches CSS transition duration
 });
     // --- element refs ---
@@ -688,7 +688,7 @@ poemDiv.addEventListener('click', e => e.stopPropagation());
           if (!title) {
             title = document.createElement('div');
             title.className = 'title';
-            title.innerText = 'The Garden of Love';
+            title.innerText = 'Your Poem';
             circle.appendChild(title);
           }
           title.style.opacity = 1;

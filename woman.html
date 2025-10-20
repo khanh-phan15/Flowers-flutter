@@ -241,25 +241,14 @@
   text-align: left;
   white-space: pre-line; /* keep line breaks */
   max-width: 80%;
-  max-height: 50vh;    
+  max-height: 100vh;    
   overflow-y: auto;     /* enable vertical scrolling */
   padding: 2rem;        /* optional, for spacing inside box */
   z-index: 5;
   pointer-events: auto; /* allow scrolling */
   border-radius: 8px;  /* optional, rounded edges */
 }
-.fullscreen-poem {
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: rgba(255,255,255,0.6) transparent;
-}
-.fullscreen-poem::-webkit-scrollbar {
-  width: 8px;
-}
-.fullscreen-poem::-webkit-scrollbar-thumb {
-  background-color: rgba(255,255,255,0.6);
-  border-radius: 4px;
 
-}
 .slide-out-left {
   transform: translateX(-100%);
 }
@@ -333,6 +322,16 @@
 .side-menu .submenu.open {
   max-height: 500px; /* large enough to show all sections */
 }
+.floating-letter {
+  position: absolute;
+  font-family: 'BodyFont', sans-serif;
+  font-size: 1.2rem;
+  color: white;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 3s ease, opacity 3s ease;
+}
+
   </style>
 </head>
 <body>
@@ -357,14 +356,15 @@
       <a href="#">CHAPTER 2</a>
       <div class="submenu">
         <a href="todaffodils.html">To Daffodils</a>
+        <a href="woman.html">Every Woman Lives Like a Flower</a>
+
   
       </div>
     </div>
     <div class="menu-item">
       <a href="#">CHAPTER 3</a>
       <div class="submenu">
-        <a href="garden.html">The Garden of Love</a>
-        <a href="woman.html">Every Woman Lives Like a Flower</a>
+        <a href="yourpoem.html">Your Poem</a>
       </div>
     </div>
   </div>
@@ -375,7 +375,7 @@
 
   <!-- Middle: intro, circle, controls -->
   <div class="middle">
-    <div class="intro">CHAPTER 3: THE HUMAN HANDS ON BEAUTY</div>
+    <div class="intro">CHAPTER 2: THE FRAGILITY OF INNOCENCE</div>
     <div class="circle-image show-title">
       <div class="media-layer">
         <img src="images/woman.jpg" alt="Circular Image">
@@ -383,8 +383,8 @@
       <div class="title">Every Woman Lives Like a Flower</div>
 
     </div>
-    <div class="left-arrow" data-target="garden.html"><</div>
-    <div class="right-arrow" data-target="rhodora.html">></div>
+    <div class="left-arrow" data-target="todaffodils.html"><</div>
+    <div class="right-arrow" data-target="yourpoem.html">></div>
 
     <div class="control-bar">
       <div class="pause-button">⏸</div>
@@ -405,7 +405,7 @@ rightArrow.addEventListener('click', () => {
 
   // Wait for animation to finish before navigating
   setTimeout(() => {
-    window.location.href = 'rhodora.html'; // replace with your target page
+    window.location.href = 'yourpoem.html'; // replace with your target page
   }, 500); // matches CSS transition duration
 });
 
@@ -416,7 +416,7 @@ leftArrow.addEventListener('click', () => {
   document.body.classList.add('slide-out-left'); // or create 'slide-out-right' if you want opposite direction
 
   setTimeout(() => {
-    window.location.href = 'garden.html'; // replace with your target page
+    window.location.href = 'todaffodils.html'; // replace with your target page
   }, 500); // matches CSS transition duration
 });
 
@@ -429,20 +429,20 @@ leftArrow.addEventListener('click', () => {
     const videoSrc = 'images/woman-video.mp4';
     
     const poemText = `
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty
-    beauty beauty beauty beauty`;
+Every woman, a flower, forever in bloom,
+Carving beauty from life’s demanding loom.
+Neither a fragile petal, nor frail and meek,
+But in a daylily’s spirit — resilient, unique.
+
+Through floods of tears and droughts of care,
+She stands steadfast, her roots laid bare.
+Tolerant of storms, unyielding to strife,
+She blooms with grace, the essence of life.
+
+Every woman does live like a flower,
+A daylily, blooming with timeless power.
+Not merely a wish, but a truth profound,
+In her resilience, life’s beauty is found.`;
     
   
     let videoEl = null;
@@ -567,22 +567,75 @@ leftArrow.addEventListener('click', () => {
         expandedVideo = null;
       }
   
-      // --- ADD POEM ---
-   // --- ADD POEM ---
-   const poemWrapper = document.createElement('div');
+     // --- ADD POEM ---
+const poemWrapper = document.createElement('div');
 poemWrapper.style.maxHeight = '55vh';
-poemWrapper.style.overflowY = 'auto';
-poemWrapper.style.pointerEvents = 'auto';
-poemWrapper.style.width = '100%';
+poemWrapper.style.overflow = 'hidden';
+poemWrapper.style.pointerEvents = 'none';
+poemWrapper.style.width = '80%';
+poemWrapper.style.height = '55vh';
 poemWrapper.style.display = 'flex';
 poemWrapper.style.justifyContent = 'center';
+poemWrapper.style.alignItems = 'center';
+poemWrapper.style.position = 'relative';
 
 const poemDiv = document.createElement('div');
 poemDiv.className = 'fullscreen-poem';
 poemDiv.innerText = poemText;
-
 poemWrapper.appendChild(poemDiv);
 overlay.appendChild(poemWrapper);
+
+// --- FLOATING WORDS ---
+setTimeout(() => {
+  const text = poemDiv.innerText;
+  const words = text.split(/\s+/);
+
+  poemDiv.style.transition = 'opacity 1s ease';
+  poemDiv.style.opacity = '0';
+
+  const wrapperRect = poemWrapper.getBoundingClientRect();
+  const floatingWords = [];
+
+  words.forEach((word, i) => {
+    const floatSpan = document.createElement('div');
+    floatSpan.className = 'floating-letter';
+    floatSpan.innerText = word;
+    floatSpan.style.left = `${Math.random() * wrapperRect.width}px`;
+    floatSpan.style.top = `${Math.random() * wrapperRect.height}px`;
+    floatSpan.style.opacity = '0';
+    poemWrapper.appendChild(floatSpan);
+
+    // stagger fade-in
+    setTimeout(() => floatSpan.style.opacity = '1', i * 20);
+
+    floatingWords.push({
+      el: floatSpan,
+      x: parseFloat(floatSpan.style.left),
+      y: parseFloat(floatSpan.style.top),
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5,
+      rot: 0,
+      rotSpeed: (Math.random() - 0.5) * 0.02
+    });
+  });
+
+  function animateWords() {
+    floatingWords.forEach(w => {
+      w.x += w.vx;
+      w.y += w.vy;
+      w.rot += w.rotSpeed;
+
+      if (w.x < 0) w.x = wrapperRect.width;
+      if (w.x > wrapperRect.width) w.x = 0;
+      if (w.y < 0) w.y = wrapperRect.height;
+      if (w.y > wrapperRect.height) w.y = 0;
+
+      w.el.style.transform = `translate(${w.x}px, ${w.y}px) rotate(${w.rot}rad)`;
+    });
+    requestAnimationFrame(animateWords);
+  }
+  requestAnimationFrame(animateWords);
+}, 1500); // start floating half a second after overlay opens
 
   
       document.body.insertBefore(overlay, document.body.firstChild);
@@ -615,12 +668,14 @@ overlay.appendChild(poemWrapper);
 poemDiv.addEventListener('click', (e) => {
   e.stopPropagation(); // same for inner poem div
 });
-poemWrapper.style.maxHeight = '55vh';
-poemWrapper.style.overflowY = 'auto';
+poemWrapper.style.position = 'relative'; // added
 poemWrapper.style.width = '80%';
+poemWrapper.style.height = '55vh'; // ensure height
 poemWrapper.style.display = 'flex';
 poemWrapper.style.justifyContent = 'center';
-poemWrapper.style.pointerEvents = 'auto';
+poemWrapper.style.alignItems = 'center'; // vertically center
+poemWrapper.style.overflow = 'hidden'; // contain floating words
+poemWrapper.style.pointerEvents = 'none'; // words won't block clicks;
 
 
     });
@@ -689,7 +744,7 @@ poemWrapper.style.pointerEvents = 'auto';
           if (!title) {
             title = document.createElement('div');
             title.className = 'title';
-            title.innerText = 'To Daffodils';
+            title.innerText = 'Every Woman Lives Like a Flower';
             circle.appendChild(title);
           }
           title.style.opacity = 1;
