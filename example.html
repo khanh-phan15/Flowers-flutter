@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Particle Letters Example</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #111;
+    overflow: hidden;
+    color: white;
+    font-family: sans-serif;
+  }
+  #container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .letter {
+    position: absolute;
+    font-size: 20px;
+    user-select: none;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+const text = "Every woman is a flower, a daylily blooming with power.";
+const container = document.getElementById('container');
+const letters = [];
+
+// create letter elements
+for (let i = 0; i < text.length; i++) {
+  const span = document.createElement('span');
+  span.className = 'letter';
+  span.innerText = text[i];
+  container.appendChild(span);
+
+  // random initial position
+  span.x = Math.random() * window.innerWidth;
+  span.y = Math.random() * window.innerHeight;
+  span.vx = (Math.random() - 0.5) * 1.5;
+  span.vy = (Math.random() - 0.5) * 1.5;
+  letters.push(span);
+}
+
+// mouse position
+const mouse = {x: window.innerWidth/2, y: window.innerHeight/2};
+container.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+// animation loop
+function animate() {
+  letters.forEach((l, idx) => {
+    l.x += l.vx;
+    l.y += l.vy;
+
+    // bounce off edges
+    if (l.x < 0 || l.x > window.innerWidth) l.vx *= -1;
+    if (l.y < 0 || l.y > window.innerHeight) l.vy *= -1;
+
+    // form word when near mouse
+    const wordLength = text.length;
+    const spacingX = 18;
+    const spacingY = 24;
+    const targetX = window.innerWidth/2 - (wordLength*spacingX)/2 + idx*spacingX;
+    const targetY = window.innerHeight/2;
+
+    const dx = mouse.x - l.x;
+    const dy = mouse.y - l.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 100) {
+      l.x += (targetX - l.x) * 0.05;
+      l.y += (targetY - l.y) * 0.05;
+      l.style.color = '#ffd700';
+    } else {
+      l.style.color = 'white';
+    }
+
+    l.style.left = l.x + 'px';
+    l.style.top = l.y + 'px';
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
