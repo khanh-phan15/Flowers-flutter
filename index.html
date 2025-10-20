@@ -260,8 +260,8 @@
 }
 
 .preload-image {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   animation: rotateOnly 1.5s forwards;
 }
@@ -676,8 +676,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const startRect = preloadImg.getBoundingClientRect();
 
   // Calculate translation
+
   const translateX = finalRect.left + finalRect.width / 2 - (startRect.left + startRect.width / 2);
-  const translateY = finalRect.top + finalRect.height / 2 - (startRect.top + startRect.height / 2);
+  const translateY = finalRect.top + finalRect.height / 2 - (startRect.top + startRect.height / 1.6);
 
   // Calculate scale
   const scaleX = finalRect.width / startRect.width;
@@ -721,12 +722,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Animate each word to match homepage position
   setTimeout(() => {
-    flowersWord.style.opacity = 1;
-    flutterWord.style.opacity = 1;
+  flowersWord.style.opacity = 1;
+  flutterWord.style.opacity = 1;
 
-    flowersWord.style.transform = `translate(${flowersTranslateX}px, ${flowersTranslateY}px) rotate(180deg)`;
-    flutterWord.style.transform = `translate(${flutterTranslateX}px, ${flutterTranslateY}px)`;
-  }, 600);
+  const flowersTranslateX = flowersRect.left - flowersWordRect.left;
+  const flowersTranslateY = flowersRect.top - flowersWordRect.top;
+
+  const manualOffset = 15; // adjust as needed
+  const flutterTranslateX = flutterRect.left - flutterWordRect.left;
+  const flutterTranslateY = flutterRect.top - flutterWordRect.top - manualOffset;
+
+  flowersWord.style.transform = `translate(${flowersTranslateX}px, ${flowersTranslateY}px) rotate(180deg)`;
+  flutterWord.style.transform = `translate(${flutterTranslateX}px, ${flutterTranslateY}px)`;
+}, 600);
+
 
   // Remove preloader after animation completes
   setTimeout(() => {
